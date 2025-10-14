@@ -1,78 +1,103 @@
-<div class="p-6 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Checkout</h1>
-
-    {{-- Search --}}
-    <input type="text" wire:model="search" placeholder="Search products..." class="w-full border p-2 mb-3 rounded">
-
-    {{-- Search Results --}}
-    @if($results)
-    <ul class="border rounded mb-4">
-        @foreach($results as $result)
-        <li class="flex justify-between items-center p-2 border-b">
-            <span>{{ $result->product->name }} - {{ $result->label }} (Ksh {{ $result->retail_price }})</span>
-            <button wire:click="addToCart({{ $result->id }})" class="bg-blue-600 text-white px-2 py-1 rounded">Add</button>
-        </li>
-        @endforeach
-    </ul>
-    @endif
-
-    {{-- Cart --}}
-    <h2 class="text-lg font-bold mb-2">Cart</h2>
-    @error('cart') <div class="text-red-600 mb-2">{{ $message }}</div> @enderror
-
-    <table class="w-full mb-4">
-        <thead>
-            <tr class="border-b">
-                <th class="text-left">Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($cart as $item)
-            <tr>
-                <td>{{ $item['name'] }}</td>
-                <td class="text-right">{{ $item['quantity'] }}</td>
-                <td class="text-right">{{ number_format($item['unit_price'], 2) }}</td>
-                <td class="text-right">{{ number_format($item['unit_price'] * $item['quantity'], 2) }}</td>
-                <td><button wire:click="removeFromCart({{ $item['id'] }})" class="text-red-600">X</button></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="text-right mb-4">
-        <div>Subtotal: Ksh {{ number_format($this->subtotal, 2) }}</div>
-        <div>Tax: Ksh {{ number_format($this->tax, 2) }}</div>
-        <div>Discount: Ksh {{ number_format($this->discount, 2) }}</div>
-        <div class="font-bold text-lg">Total: Ksh {{ number_format($this->grandTotal, 2) }}</div>
-    </div>
-
-    {{-- Actions --}}
-    <div class="flex space-x-2">
-        <button wire:click="finalizeSale" class="bg-green-600 text-white px-3 py-2 rounded">Complete Sale</button>
-        <button wire:click="holdSale" class="bg-yellow-500 text-white px-3 py-2 rounded">Hold Sale</button>
-    </div>
-
-    {{-- Held Sales --}}
-    @if($heldSales->count())
-    <h3 class="mt-6 font-bold">Held Sales</h3>
-    <ul>
-        @foreach($heldSales as $sale)
-        <li class="flex justify-between items-center border-b py-2">
-            <span>Invoice: {{ $sale->invoice_no }} | Ksh {{ number_format($sale->total, 2) }}</span>
-            <div class="flex space-x-2">
-                <button wire:click="resumeSale({{ $sale->id }})" class="bg-blue-600 text-white px-2 py-1 rounded">Resume</button>
-                <button wire:click="cancelSale({{ $sale->id }})" class="bg-red-600 text-white px-2 py-1 rounded">Cancel</button>
+<div class="flex h-[calc(100vh-100px)]">
+    {{-- Products Section --}}
+    <div class="w-3/5 flex flex-col p-4">
+        <div class="mb-4">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products by name or barcode..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+            @forelse($results as $product)
+            <div wire:click="addToCart({{ $product->id }})" class="bg-white p-3 rounded-lg shadow-sm cursor-pointer hover:ring-2 hover:ring-blue-500 transition-shadow duration-200 flex flex-col justify-between">
+                <h3 class="font-semibold text-sm text-gray-800 truncate">{{ $product->product->name }} - {{ $product->label }}</h3>
+                <p class="text-gray-600 font-bold mt-2">Ksh {{ number_format($product->retail_price, 2) }}</p>
             </div>
-        </li>
-        @endforeach
-    </ul>
+            @empty
+            <div class="col-span-full text-center p-10">
+                <p class="text-gray-500">No products found.</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Cart Section --}}
+    <div class="w-2/5 flex flex-col bg-white p-4 border-l border-gray-200">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Cart</h2>
+        @error('cart') <div class="text-red-500 mb-2 text-sm">{{ $message }}</div> @enderror
+
+        <div class="flex-1 overflow-y-auto border-t border-b border-gray-200 -mx-4 px-4">
+            <ul class="divide-y divide-gray-200">
+                @forelse($cart as $variantId => $item)
+                <li class="py-3 flex items-center">
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800 text-sm">{{ $item['name'] }}</p>
+                        <p class="text-xs text-gray-500">Ksh {{ number_format($item['unit_price'], 2) }}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button wire:click="decrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 hover:bg-gray-300 text-lg font-bold leading-none">-</button>
+                        <span class="w-8 text-center font-semibold">{{ $item['quantity'] }}</span>
+                        <button wire:click="incrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 hover:bg-gray-300 text-lg font-bold leading-none">+</button>
+                    </div>
+                    <div class="w-24 text-right font-semibold">
+                        Ksh {{ number_format($item['unit_price'] * $item['quantity'], 2) }}
+                    </div>
+                    <button wire:click="removeFromCart({{ $variantId }})" class="ml-4 text-red-500 hover:text-red-700 text-2xl leading-none">&times;</button>
+                </li>
+                @empty
+                <li class="text-center py-10 text-gray-500">Cart is empty</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <div class="mt-auto pt-4">
+            <div class="space-y-2 text-lg">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Subtotal:</span>
+                    <span class="font-semibold">Ksh {{ number_format($this->subtotal, 2) }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Tax (16%):</span>
+                    <span class="font-semibold">Ksh {{ number_format($this->tax, 2) }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-2xl border-t pt-2">
+                    <span>Total:</span>
+                    <span>Ksh {{ number_format($this->grandTotal, 2) }}</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button wire:click="holdSale" class="w-full py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 disabled:bg-gray-400" @if(empty($cart)) disabled @endif>
+                    Hold
+                </button>
+                <button wire:click="clearCart" class="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 disabled:bg-gray-400" @if(empty($cart)) disabled @endif>
+                    Cancel
+                </button>
+            </div>
+            <button wire:click="finalizeSale" class="w-full mt-2 py-4 bg-green-600 text-white font-bold text-lg rounded-lg hover:bg-green-700 disabled:bg-gray-400" @if(empty($cart)) disabled @endif>
+                Complete Sale
+            </button>
+        </div>
+    </div>
+
+    {{-- Held Sales (Optional Modal or separate view) --}}
+    @if($heldSales->count())
+    <div class="absolute bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg border max-w-sm">
+        <h3 class="font-bold mb-2">Held Sales</h3>
+        <ul class="text-sm space-y-2">
+            @foreach($heldSales as $sale)
+            <li class="flex justify-between items-center">
+                <span>{{ $sale->invoice_no }} (Ksh {{ number_format($sale->total, 2) }})</span>
+                <div class="space-x-1">
+                    <button wire:click="resumeSale({{ $sale->id }})" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">Resume</button>
+                    <button wire:click="cancelSale({{ $sale->id }})" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs">Cancel</button>
+                </div>
+            </li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     @if(session()->has('message'))
-    <div class="mt-4 text-green-600">{{ session('message') }}</div>
+    <div class="absolute top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert">
+        <span class="block sm:inline">{{ session('message') }}</span>
+    </div>
     @endif
 </div>

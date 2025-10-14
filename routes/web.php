@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Receipt;
 use App\Livewire\PointOfSale;
 
-Route::get('/', PointOfSale::class)->name('pos');
-// 
+Route::get('/', fn () => redirect()->route('login'));
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
