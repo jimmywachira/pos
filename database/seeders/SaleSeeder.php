@@ -13,10 +13,13 @@ class SaleSeeder extends Seeder
 {
     public function run(): void
     {
-        $branch = Branch::first();
-        $cashier = User::first(); // assumes you already have a user
-        $customer = \App\Models\Customer::first();
-        $variant = ProductVariant::first();
+        $branch = Branch::firstOrCreate(
+            ['name' => 'Main Branch'],
+            ['code' => 'MAIN', 'address' => 'Main Branch Address', 'phone' => '0000000000']
+        );
+        $cashier = User::firstOrCreate(['email' => 'cashier@example.com'], ['name' => 'Cashier', 'password' => bcrypt('password')]);
+        $customer = \App\Models\Customer::firstOrCreate(['email' => 'walkin@example.com'], ['name' => 'Walk-in Customer', 'phone' => '0000000000']);
+        $variant = ProductVariant::first(); // Assumes ProductSeeder runs and creates variants
 
         $sale = Sale::create([
             'invoice_no' => 'INV0001',
