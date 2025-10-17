@@ -2,22 +2,23 @@
 
     {{-- Products Section --}}
     <div class="@if(!empty($cart)) w-3/5 @else w-full @endif flex flex-col p-4 transition-all duration-300">
-        <div class="mb-4">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products by name or barcode..." class="w-full p-3 border-2 border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600">
+        <div class="mb-4 relative">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products..." class="w-full p-3 pl-10 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <ion-icon name="search-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></ion-icon>
         </div>
 
         {{-- Product Grid - Adjust columns based on cart visibility --}}
         <div class="flex-1 grid grid-cols-2 @if(!empty($cart)) md:grid-cols-3 lg:grid-cols-4 @else md:grid-cols-4 lg:grid-cols-6 @endif gap-4 overflow-y-auto p-2">
             @forelse($products as $product)
-            <div wire:click="addToCart({{ $product->id }})" class="bg-white shadow hover:shadow-lg border border-blue-200 cursor-pointer hover:ring-2 hover:ring-indigo-600 transition-all duration-200 flex flex-col overflow-hidden">
+            <div wire:click="addToCart({{ $product->id }})" class="bg-white rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
                 <img src="{{ $product->product->image_url ?? 'https://picsum.photos/seed/' . $product->id . '/300/200' }}" alt="{{ $product->product->name }}" class="w-full h-32 object-cover">
                 <div class="p-3 flex flex-col flex-grow">
-                    <h3 class="font-semibold text-lg truncate">{{ $product->product->name }} - {{ $product->label }}</h3>
-                    <p class="font-bold mt-2 text-indigo-700 text-xl">Ksh {{ number_format($product->retail_price, 2) }}</p>
+                    <h3 class="text-md truncate">{{ $product->product->name }} - {{ $product->label }}</h3>
+                    <p class="font-semibold mt-auto text-blue-600 text-lg">Ksh {{ number_format($product->retail_price, 2) }}</p>
                 </div>
             </div>
             @empty
-            <div class="col-span-full text-center py-10">
+            <div class="col-span-full text-center py-10 text-gray-500">
                 <p class="text-gray-500">No products found.</p>
             </div>
             @endforelse
@@ -31,30 +32,40 @@
 
     {{-- Cart Section (conditional) --}}
     @if(!empty($cart))
-    <div class="w-2/5 flex flex-col p-4 text-black bg-inherit border-l-2 border-gray-200">
-        <h2 class="text-xl text-center border-2 rounded-b-lg border-blue-600 p-2 font-bold mb-4">🛒 Cart</h2>
+    <div class="w-2/5 flex flex-col p-4 text-black bg-white border-l-2 border-gray-200 shadow-lg">
+        <h2 class="text-2xl mb-4" style="font-family: 'Delicious Handrawn', sans-serif;">Current Sale</h2>
         @error('cart')
         <div class="text-red-500 mb-2 ">{{ $message }}</div>
         @enderror
 
         {{-- Cart Items --}}
-        <div class="flex-1 overflow-y-auto mx-4 px-4">
-            <ul class="divide-y divide-gray-200">
+        <div class="flex-1 overflow-y-auto -mx-4 pr-2">
+            {{-- Cart Header --}}
+            <div class="flex items-center px-4 pb-2 border-b-2 text-xs text-gray-400 tracking-wider">
+                <div class="flex-grow">Item</div>
+                <div class="w-20 text-center">Qty</div>
+                <div class="w-24 text-right">Total</div>
+                <div class="w-10 text-right"></div>
+            </div>
+
+            <ul class="divide-y divide-gray-100">
                 @forelse($cart as $variantId => $item)
-                <li class="py-3 flex items-center justify-between">
-                    <div class="flex-1">
-                        <p class="font-semibold ">{{ $item['name'] }}</p>
-                        <p class=" text-gray-500">Ksh {{ number_format($item['unit_price'], 2) }}</p>
+                <li class="py-3 flex items-center px-4">
+                    <div class="flex-grow">
+                        <p class=text-sm">{{ $item['name'] }}</p>
+                        <p class="text-xs text-gray-500">@ Ksh {{ number_format($item['unit_price'], 2) }}</p>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button wire:click="decrementQuantity({{ $variantId }})" class="px-2 border border-gray-300 rounded-full hover:bg-gray-300 font-bold">-</button>
-                        <span class="w-8 text-center font-semibold">{{ $item['quantity'] }}</span>
-                        <button wire:click="incrementQuantity({{ $variantId }})" class="px-2 border border-gray-300 rounded-full hover:bg-gray-300 font-bold">+</button>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button wire:click="decrementQuantity({{ $variantId }})" class="p-1 border rounded-full w-6 h-6 flex items-center justify-center hover:bg-gray-200">-</button>
+                        <span class="w-8 text-center">{{ $item['quantity'] }}</span>
+                        <button wire:click="incrementQuantity({{ $variantId }})" class="p-1 border rounded-full w-6 h-6 flex items-center justify-center hover:bg-gray-200">+</button>
                     </div>
-                    <div class="w-24 text-right font-semibold">
+                    <div class="w-24 text-right">
                         Ksh {{ number_format($item['unit_price'] * $item['quantity'], 2) }}
                     </div>
-                    <button wire:click="removeFromCart({{ $variantId }})" class="ml-4 text-red-500 hover:text-red-700 text-xl">&times;</button>
+                    <button wire:click="removeFromCart({{ $variantId }})" class="w-10 text-right text-gray-400 hover:text-red-600 text-xl">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </button>
                 </li>
                 @empty
                 <li class="text-center py-10 text-gray-500 italic">Cart is empty — start adding products</li>
@@ -63,18 +74,18 @@
         </div>
 
         {{-- Totals Section --}}
-        <div class="mt-auto pt-4 border-t border-gray-300 space-y-2 text-lg">
+        <div class="mt-auto pt-4 border-t-2 border-gray-100 space-y-2 text-md">
             <div class="flex justify-between">
-                <span>Subtotal:</span>
+                <span class="text-gray-600">Subtotal:</span>
                 <span class="font-semibold">Ksh {{ number_format($this->subtotal, 2) }}</span>
             </div>
             <div class="flex justify-between">
-                <span>Tax (16%):</span>
+                <span class="text-gray-600">Tax (16%):</span>
                 <span class="font-semibold">Ksh {{ number_format($this->tax, 2) }}</span>
             </div>
-            <div class="flex justify-between font-bold text-2xl border-t pt-2">
-                <span class="text-green-600">Total:</span>
-                <span>Ksh {{ number_format($this->grandTotal, 2) }}</span>
+            <div class="flex justify-between text-xl border-t pt-2 mt-2" style="font-family: 'Delicious Handrawn', sans-serif;">
+                <span class="text-blue-600">Total:</span>
+                <span class="text-blue-600">Ksh {{ number_format($this->grandTotal, 2) }}</span>
             </div>
 
             {{-- Payment Method --}}
@@ -93,11 +104,11 @@
             @if ($paymentMethod === 'cash')
             <div class="mt-4 space-y-2">
                 <div class="flex justify-between items-center">
-                    <label for="amount_paid" class="text-lg">Amount Paid:</label>
-                    <input type="number" wire:model.live="amountPaid" id="amount_paid" class="w-1/2 p-2 text-right font-bold text-lg border-2 border-gray-300 rounded-md">
+                    <label for="amount_paid" class="font-semibold">Amount Paid:</label>
+                    <input type="number" wire:model.live="amountPaid" id="amount_paid" class="w-1/2 p-2 text-right text-lg border-2 border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 @if ($this->change >= 0)
-                <div class="flex justify-between font-bold text-xl text-blue-700">
+                <div class="flex justify-between text-lg text-green-600">
                     <span>Change:</span>
                     <span>Ksh {{ number_format($this->change, 2) }}</span>
                 </div>
@@ -105,32 +116,32 @@
             </div>
             @endif
 
-            {{-- Controls --}}
-            <div class="grid grid-cols-2 gap-3 mt-6">
-                <button wire:click="holdSale" class="w-full py-3 bg-yellow-500 text-white font-bold hover:bg-yellow-600 disabled:opacity-50" @if(empty($cart)) disabled @endif>
-                    Hold
+            {{-- Action Buttons --}}
+            <div class="grid grid-cols-2 gap-3 mt-6 text-sm">
+                <button wire:click="holdSale" class="w-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
+                    <ion-icon name="pause-outline" class="text-lg"></ion-icon>
+                    <span>Hold</span>
                 </button>
-                <button wire:click="clearCart" class="w-full py-3 bg-red-500 text-white font-bold hover:bg-red-600 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
-                    <ion-icon name="trash-outline" class="text-xl"></ion-icon>
+                <button wire:click="clearCart" class="w-full py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
+                    <ion-icon name="close-circle-outline" class="text-lg"></ion-icon>
                     <span>Cancel</span>
                 </button>
             </div>
 
-            <button wire:click="finalizeSale" class="w-full mt-3 py-4 bg-green-600 text-white font-bold text-lg hover:bg-green-700 disabled:opacity-50" @if(empty($cart)) disabled @endif>
-                ✅ Complete Sale
-            </button>
-
-            <button wire:click="printReceipt" class="w-full mt-2 py-3 bg-blue-600 text-white font-bold hover:bg-blue-700">
-                🧾 Print Receipt
+            <button wire:click="finalizeSale" class="w-full mt-3 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
+                <ion-icon name="checkmark-done-outline" class="text-2xl"></ion-icon>
+                <span>Complete Sale</span>
             </button>
         </div>
     </div>
     @endif
 
     {{-- Held Sales --}}
-    @if($heldSales->count())
-    <div class="absolute bottom-4 left-4 bg-white p-4 shadow-lg border border-gray-200 max-w-sm">
-        <h3 class="font-bold mb-2">🕒 Held Sales</h3>
+    @if($heldSales->count() > 0)
+    <div class="absolute bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 max-w-sm">
+        <h3 class=mb-2 flex items-center gap-2">
+            <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
+        </h3>
         <ul class=" space-y-2">
             @foreach($heldSales as $sale)
             <li class="flex justify-between items-center">
@@ -146,15 +157,15 @@
     @endif
 
     {{-- Toast Notifications --}}
-    @if(session()->has('message'))
-    <div class="absolute top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert">
-        <span class="block sm:inline">{{ session('message') }}</span>
+    <div x-data="{
+        flashMessage: '',
+        flashType: '',
+        showAlert: false,
+        show(message, type = 'success') {
+            this.flashMessage = message; this.flashType = type; this.showAlert = true;
+            setTimeout(() => this.showAlert = false, 3000);
+        }
+    }" x-on:flash-message.window="show($event.detail.message, $event.detail.type)" x-show="showAlert" x-transition class="absolute top-5 right-5 px-4 py-2 rounded-lg text-white" :class="flashType === 'success' ? 'bg-green-500' : 'bg-red-500'">
+        <span x-text="flashMessage"></span>
     </div>
-    @endif
-
-    @if(session()->has('error'))
-    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="absolute top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
-        <span class="block sm:inline">{{ session('error') }}</span>
-    </div>
-    @endif
 </div>

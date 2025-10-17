@@ -9,6 +9,6 @@ class Batches extends Component
     public function render()
     {
         return view('livewire.inventory.batches')
-            ->layout('layouts.pos');
+            ->layout('layouts.app');
     }
 }

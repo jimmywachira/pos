@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-full w-full relative text-lg bg-white bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:70px_210px]">
+<html lang="en" class="h-full w-full relative text-lg bg-white bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:50px_100px]">
 
 <head>
     <meta charset=" UTF-8">
@@ -7,45 +7,40 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $title ?? 'pos system +'}}</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=delicious-handrawn" rel="stylesheet" />
-    {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand"> --}}
+    {{-- <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Delicious Handrawn-handrawn" rel="stylesheet" /> --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delicious Handrawn">
     <meta name="description" content="A simple Livewire POS system">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="h-full antialiased text-black" style="font-family: 'Delicious Handrawn', sans-serif;">
+<body class="h-full antialiased text-black" style="font-family: 'Delicious Handrawn';">
     <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         {{-- Main Nav Links --}}
         <div class="flex items-center gap-8">
-            <a wire:navigate.hover href="{{ route('pos') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('pos') ? 'text-blue-700' : '' }}">
+            <a wire:navigate.hover href="{{ route('pos') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('pos') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="grid-outline"></ion-icon>
                 <span>POS</span>
             </a>
 
-            <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}">
+            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="archive-outline"></ion-icon>
                 <span>Inventory</span>
             </a>
 
-            <a wire:navigate.hover href="{{ route('customers.management') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('customers.*') ? 'text-blue-700' : '' }}">
+            <a wire:navigate.hover href="{{ route('customers.management') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('customers.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="people-outline"></ion-icon>
                 <span>Customers</span>
             </a>
-            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}">
-                <ion-icon class="text-3xl" name="cube-outline"></ion-icon>
-                <span>Products</span>
+            <a wire:navigate.hover href="{{ route('reports.sales') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('reports.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                <ion-icon class="text-3xl" name="stats-chart-outline"></ion-icon>
+                <span>Reports</span>
             </a>
-            <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}">
-                <ion-icon class="text-3xl" name="layers-outline"></ion-icon>
-                <span>Batches</span>
-            </a>
-            <a wire:navigate.hover href="{{ route('settings.general') }}" class="flex flex-col items-center text-xl font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings.*') ? 'text-blue-700' : '' }}">
+            <a wire:navigate.hover href="{{ route('settings') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
                 <span>Settings</span>
             </a>
         </div>
-
 
         {{-- Auth Section --}}
         <div class="flex items-center gap-6">

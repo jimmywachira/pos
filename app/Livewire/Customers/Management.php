@@ -9,6 +9,6 @@ class Management extends Component
     public function render()
     {
         return view('livewire.customers.management')
-            ->layout('layouts.pos');
+            ->layout('layouts.app');
     }
 }

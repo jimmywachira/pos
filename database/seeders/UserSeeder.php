@@ -12,10 +12,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            // password is 'password'
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => 'password', // The 'password' attribute is automatically hashed by the User model's cast.
+            ]
+        );
     }
 }

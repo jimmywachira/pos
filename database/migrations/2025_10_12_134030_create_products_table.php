@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('retail_price', 14, 2);
+            $table->decimal('retail_price', 14, 2)->nullable();
             $table->decimal('cost_price', 14, 2)->nullable();
-            // $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

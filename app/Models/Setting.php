@@ -1,40 +1,33 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Models;
 
-use Livewire\Component;
-use App\Models\Setting;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
-class SettingsPage extends Component
+class Setting extends Model
 {
-    public $currency;
-    public $tax;
-    public $store_name;
-    public $receipt_footer;
+    protected $fillable = ['key', 'value'];
 
-    public function mount()
+    /**
+     * Get a setting value by key.
+     */
+    public static function get($key, $default = null)
     {
-        $this->currency = setting('currency', 'KES');
-        $this->tax = setting('tax', 16);
-        $this->store_name = setting('store_name', 'My POS Shop');
-        $this->receipt_footer = setting('receipt_footer', 'Thank you for shopping with us!');
+        return Cache::rememberForever('settings.' . $key, function () use ($key, $default) {
+            $setting = static::where('key', $key)->first();
+            return $setting ? $setting->value : $default;
+        });
     }
 
-    public function save()
+    /**
+     * Set a setting value.
+     */
+    public static function set($key, $value)
     {
-        Setting::set('currency', $this->currency);
-        Setting::set('tax', $this->tax);
-        Setting::set('store_name', $this->store_name);
-        Setting::set('receipt_footer', $this->receipt_footer);
+        $setting = static::updateOrCreate(['key' => $key], ['value' => $value]);
 
-        $this->dispatchBrowserEvent('toast', [
-            'type' => 'success',
-            'message' => 'Settings updated successfully!'
-        ]);
-    }
-
-    public function render()
-    {
-        return view('livewire.settings-page');
+        Cache::forget('settings.' . $key);
+        return $setting;
     }
 }
