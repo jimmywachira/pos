@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-full w-full relative text-lg bg-white bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:50px_100px]">
+<html lang="en" class="h-full w-full relative bg-white bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:50px_100px]">
 
 <head>
     <meta charset=" UTF-8">
@@ -8,13 +8,13 @@
     <title>{{ $title ?? 'pos system +'}}</title>
 
     {{-- <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Delicious Handrawn-handrawn" rel="stylesheet" /> --}}
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delicious Handrawn">
+    <link href="https://fonts.bunny.net/css?family=Quicksand-handrawn" rel="stylesheet" /> --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
     <meta name="description" content="A simple Livewire POS system">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="h-full antialiased text-black" style="font-family: 'Delicious Handrawn';">
+<body class="h-full antialiased text-black font-semibold" style="font-family: 'Quicksand';">
     <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         {{-- Main Nav Links --}}
         <div class="flex items-center gap-8">
