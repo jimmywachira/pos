@@ -1,4 +1,4 @@
-<div class="flex h-[calc(100vh-80px)] bg-inherit relative">
+<div class="flex h-[calc(100vh-80px)] bg-inherit relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
 
     {{-- Products Section --}}
     <div class="@if(!empty($cart)) w-3/5 @else w-full @endif flex flex-col p-4 transition-all duration-300">

@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $title ?? 'pos system +'}}</title>
-
-    {{-- <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Quicksand-handrawn" rel="stylesheet" /> --}}
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans">
     <meta name="description" content="A simple Livewire POS system">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="h-full antialiased text-black font-semibold" style="font-family: 'Quicksand';">
+<body class="h-full antialiased text-black font-semibold" style="font-family: 'Josefin Sans';">
     <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         {{-- Main Nav Links --}}
         <div class="flex items-center gap-8">
@@ -23,10 +20,17 @@
                 <span>POS</span>
             </a>
 
-            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class="text-3xl" name="archive-outline"></ion-icon>
-                <span>Inventory</span>
-            </a>
+            {{-- Inventory Dropdown --}}
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                    <ion-icon class="text-3xl" name="archive-outline"></ion-icon>
+                    <span>Inventory</span>
+                </button>
+                <div x-show="open" @click.away="open = false" x-transition class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border">
+                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('inventory.products') ? 'font-bold text-blue-600' : '' }}">Products</a>
+                    <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('inventory.batches') ? 'font-bold text-blue-600' : '' }}">Stock Batches</a>
+                </div>
+            </div>
 
             <a wire:navigate.hover href="{{ route('customers.management') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('customers.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="people-outline"></ion-icon>

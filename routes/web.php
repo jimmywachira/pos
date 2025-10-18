@@ -11,7 +11,7 @@ use App\Livewire\Customers\Management;
 use App\Livewire\Settings\General;
 
 Route::get('/', fn () => redirect()->route('login'));
-Route::get('receipt/{sale}', [ReceiptController::class,'print'])->name('receipt.print');
+Route::get('receipt/{sale}', Receipt::class)->name('receipt.print');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/settings', General::class)->name('settings');
