@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock};
 use Illuminate\Support\Facades\DB;
+use Safaricom\Mpesa\Mpesa;
 use Illuminate\Support\Facades\Auth;
 
 class PointOfSale extends Component
@@ -19,7 +20,11 @@ class PointOfSale extends Component
     public $amountPaid = 0;
     public $paymentMethod = 'cash';
     public $discount = 0;
+    public $mpesaPhone;
     public $resumingSaleId = null;
+
+    // State properties
+    public $isProcessingMpesa = false;
 
     protected $paginationTheme = 'tailwind';
 
@@ -119,6 +124,7 @@ class PointOfSale extends Component
     public function clearCart()
     {
         $this->cart = [];
+        $this->isProcessingMpesa = false;
         $this->discount = 0;
         $this->amountPaid = 0;
         $this->resumingSaleId = null;
@@ -132,44 +138,84 @@ class PointOfSale extends Component
             return;
         }
 
-        if ($this->paymentMethod === 'cash' && floatval($this->amountPaid) < $this->grandTotal) {
-            $this->dispatch('flash-message', message: 'Amount paid is less than the total.', type: 'error');
-            return;
-        }
-
-        $sale = DB::transaction(function () {
-            $sale = Sale::create([
-                'invoice_no' => 'INV-' . now()->format('YmdHis'),
-                'branch_id' => $this->branchId,
-                'user_id' => Auth::id(),
-                'customer_id' => $this->customerId,
-                'total' => $this->grandTotal,
-                'tax' => $this->tax,
-                'discount' => $this->discount,
-                'paid' => $this->paymentMethod === 'cash' ? $this->grandTotal : floatval($this->amountPaid),
-                'payment_method' => $this->paymentMethod,
-                'status' => 'completed',
-            ]);
-
-            foreach ($this->cart as $item) {
-                $sale->items()->create([
-                    'product_variant_id' => $item['id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'line_total' => $item['unit_price'] * $item['quantity'],
-                ]);
-
-                // Reduce stock
-                Stock::where('branch_id', $this->branchId)
-                    ->where('product_variant_id', $item['id'])
-                    ->decrement('quantity', $item['quantity']);
+        if ($this->paymentMethod === 'mpesa') {
+            $this->initiateMpesaPayment();
+        } else { // Cash payment
+            if (floatval($this->amountPaid) < $this->grandTotal) {
+                $this->dispatch('flash-message', message: 'Amount paid is less than the total.', type: 'error');
+                return;
             }
 
-            return $sale;
-        });
+            $sale = DB::transaction(function () {
+                $sale = Sale::create([
+                    'invoice_no' => 'INV-' . now()->format('YmdHis'),
+                    'branch_id' => $this->branchId,
+                    'user_id' => Auth::id(),
+                    'customer_id' => $this->customerId,
+                    'total' => $this->grandTotal,
+                    'tax' => $this->tax,
+                    'discount' => $this->discount,
+                    'paid' => floatval($this->amountPaid),
+                    'payment_method' => 'cash',
+                    'status' => 'completed',
+                ]);
 
-        $this->clearCart();
-        $this->dispatch('print-receipt', saleId: $sale->id);
+                foreach ($this->cart as $item) {
+                    $sale->items()->create([
+                        'product_variant_id' => $item['id'],
+                        'quantity' => $item['quantity'],
+                        'unit_price' => $item['unit_price'],
+                        'line_total' => $item['unit_price'] * $item['quantity'],
+                    ]);
+
+                    Stock::where('branch_id', $this->branchId)
+                        ->where('product_variant_id', $item['id'])
+                        ->decrement('quantity', $item['quantity']);
+                }
+                return $sale;
+            });
+
+            $this->dispatch('print-receipt', saleId: $sale->id);
+            $this->clearCart();
+        }
+    }
+
+    public function initiateMpesaPayment()
+    {
+        $this->validate(['mpesaPhone' => 'required|numeric|digits:12']);
+
+        $invoiceNo = 'INV-' . now()->format('YmdHis');
+
+        // Create a pending sale record first
+        $sale = Sale::create([
+            'invoice_no' => $invoiceNo,
+            'branch_id' => $this->branchId,
+            'user_id' => Auth::id(),
+            'customer_id' => $this->customerId,
+            'total' => $this->grandTotal,
+            'tax' => $this->tax,
+            'discount' => $this->discount,
+            'paid' => $this->grandTotal,
+            'payment_method' => 'mpesa',
+            'status' => 'pending_payment',
+        ]);
+
+        foreach ($this->cart as $item) {
+            $sale->items()->create([
+                'product_variant_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'line_total' => $item['unit_price'] * $item['quantity'],
+            ]);
+        }
+
+        $mpesa = new Mpesa();
+        $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
+
+        $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
+
+        $this->isProcessingMpesa = true;
+        $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
     }
 
     // 💾 Hold Sale

@@ -1,4 +1,11 @@
-<div class="flex h-[calc(100vh-80px)] bg-inherit relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
+<div class="flex h-[calc(100vh-80px)] bg-inherit relative" x-data="{
+        init() {
+            window.Echo.private('user.{{ auth()->id() }}')
+                .listen('MpesaPaymentSuccess', (e) => {
+                    $wire.mpesaPaymentSuccess(e.sale);
+                });
+        }
+    }" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
 
     {{-- Products Section --}}
     <div class="@if(!empty($cart)) w-3/5 @else w-full @endif flex flex-col p-4 transition-all duration-300">
@@ -91,11 +98,11 @@
             {{-- Payment Method --}}
             <div class="mt-4">
                 <div class="grid grid-cols-2 gap-2">
-                    <button wire:click="$set('paymentMethod', 'cash')" class="py-2 font-semibold rounded-md {{ $paymentMethod === 'cash' ? 'bg-blue-600 text-white' : 'bg-gray-200' }}">
+                    <button wire:click="$set('paymentMethod', 'cash')" class="py-2 font-semibold rounded-md {{ $paymentMethod === 'cash' ? 'bg-blue-600 text-white' : 'bg-gray-200' }}" @if($isProcessingMpesa) disabled @endif>
                         Cash
                     </button>
-                    <button wire:click="$set('paymentMethod', 'card')" class="py-2 font-semibold rounded-md {{ $paymentMethod === 'card' ? 'bg-blue-600 text-white' : 'bg-gray-200' }}">
-                        Card/M-Pesa
+                    <button wire:click="$set('paymentMethod', 'mpesa')" class="py-2 font-semibold rounded-md {{ $paymentMethod === 'mpesa' ? 'bg-blue-600 text-white' : 'bg-gray-200' }}" @if($isProcessingMpesa) disabled @endif>
+                        M-Pesa
                     </button>
                 </div>
             </div>
@@ -116,6 +123,16 @@
             </div>
             @endif
 
+            @if ($paymentMethod === 'mpesa')
+            <div class="mt-4 space-y-2">
+                <div class="flex justify-between items-center">
+                    <label for="mpesa_phone" class="font-semibold">Phone Number:</label>
+                    <input type="number" wire:model.live="mpesaPhone" id="mpesa_phone" placeholder="254..." class="w-1/2 p-2 text-right text-lg border-2 border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                @error('mpesaPhone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+            @endif
+
             {{-- Action Buttons --}}
             <div class="grid grid-cols-2 gap-3 mt-6 text-sm">
                 <button wire:click="holdSale" class="w-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
@@ -128,9 +145,15 @@
                 </button>
             </div>
 
-            <button wire:click="finalizeSale" class="w-full mt-3 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart)) disabled @endif>
+            <button wire:click="finalizeSale" class="w-full mt-3 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2" @if(empty($cart) || $isProcessingMpesa) disabled @endif>
+                <div wire:loading wire:target="finalizeSale" class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                @if($isProcessingMpesa)
+                <ion-icon name="time-outline" class="text-2xl"></ion-icon>
+                <span>Waiting for Payment...</span>
+                @else
                 <ion-icon name="checkmark-done-outline" class="text-2xl"></ion-icon>
                 <span>Complete Sale</span>
+                @endif
             </button>
         </div>
     </div>
