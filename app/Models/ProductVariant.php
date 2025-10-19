@@ -13,6 +13,11 @@ class ProductVariant extends Model
     /**
      * Get the product that owns the variant.
      */
+
+    protected $fillable = [
+        'product_id', 'label', 'barcode', 'retail_price', 'cost_price'
+    ];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
