@@ -29,11 +29,6 @@ class PointOfSale extends Component
     protected $paginationTheme = 'tailwind';
 
     // 🧠 Computed properties
-    protected function getListeners()
-    {
-        return ['mpesaPaymentSuccess'];
-    }
-
     public function getProductsProperty()
     {
         $query = ProductVariant::with('product')
@@ -223,13 +218,6 @@ class PointOfSale extends Component
         $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
     }
 
-    public function mpesaPaymentSuccess($sale)
-    {
-        $this->isProcessingMpesa = false;
-        $this->dispatch('flash-message', message: 'M-Pesa payment successful!', type: 'success');
-        $this->dispatch('print-receipt', saleId: $sale['id']);
-        $this->clearCart();
-    }
     // 💾 Hold Sale
     public function holdSale()
     {
