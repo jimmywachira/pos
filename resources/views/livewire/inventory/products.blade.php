@@ -1,7 +1,7 @@
 <div class="p-6">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Products</h2>
-        <button wire:click="create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Product</button>
+        <button wire:click="create" class="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700">Add Product</button>
     </div>
 
     @if(session()->has('success'))
