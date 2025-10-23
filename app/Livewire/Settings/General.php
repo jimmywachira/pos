@@ -16,6 +16,8 @@ class General extends Component
     public $tax;
     public $receipt_footer;
     public $logo; // For new logo upload
+    public $loyalty_earn_rate;
+    public $loyalty_redeem_value;
 
     // Existing data properties
     public $existingLogo;
@@ -28,6 +30,8 @@ class General extends Component
             'tax' => 'required|numeric|min:0|max:100',
             'receipt_footer' => 'nullable|string|max:500',
             'logo' => 'nullable|image|max:1024', // 1MB Max
+            'loyalty_earn_rate' => 'required|numeric|min:0', // e.g., spend 100 to get 1 point
+            'loyalty_redeem_value' => 'required|numeric|min:0', // e.g., 1 point = 1 Ksh
         ];
     }
 
@@ -37,6 +41,8 @@ class General extends Component
         $this->currency = Setting::get('currency', 'Ksh');
         $this->tax = Setting::get('tax', 16.00);
         $this->receipt_footer = Setting::get('receipt_footer', 'Thank you for your business!');
+        $this->loyalty_earn_rate = Setting::get('loyalty_earn_rate', 100);
+        $this->loyalty_redeem_value = Setting::get('loyalty_redeem_value', 1);
         $this->existingLogo = Setting::get('store_logo');
     }
 
@@ -52,7 +58,7 @@ class General extends Component
         }
 
         // Use a loop for cleaner code
-        $settingsToUpdate = ['store_name', 'currency', 'tax', 'receipt_footer'];
+        $settingsToUpdate = ['store_name', 'currency', 'tax', 'receipt_footer', 'loyalty_earn_rate', 'loyalty_redeem_value'];
         foreach ($settingsToUpdate as $key) {
             Setting::set($key, $this->$key);
         }

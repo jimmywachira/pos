@@ -56,7 +56,7 @@ class Login extends Component
     }
 
     /**
-     * Validate the user's credentials.
+     * Validate the user's credentials. 
      */
     protected function validateCredentials(): User
     {

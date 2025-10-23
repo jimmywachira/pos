@@ -1,11 +1,25 @@
 <div class="p-6">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold">Products</h2>
-        <button wire:click="create" class="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700">Add Product</button>
+    <div class="flex justify-between items-center mb-2">
+
+        <div class="flex justify-evenly items-center">
+            <nav class="container mx-auto p-4 space-x-4 flex justify-evenly items-center">
+                <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                    <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                    <ion-icon class=" text-3xl" name="list-outline"></ion-icon> <span>Stock</span>
+                </a>
+                <button wire:click="create" class="flex justify-evenly items-center  text-black rounded-full p-2 hover:border-blue-600">
+                    <ion-icon size="large" name="add-outline"></ion-icon> <span>Add Product</span>
+                </button>
+            </nav>
+        </div>
+        <div>
+        </div>
     </div>
 
     @if(session()->has('success'))
-    <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
+    <div class="bg-green-100 text-white p-3 rounded mb-4">{{ session('success') }}</div>
     @endif
 
     <!-- Search and Filters -->

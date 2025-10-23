@@ -2,19 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- <title>Receipt - {{ $sale->invoice_no }}</title> --}}
-    @vite(['resources/css/app.css'])
+    {{-- <title>Receipt #{{ $sale->id }}</title> --}}
     <style>
-        @media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
+        body {
+            font-family: monospace;
+            font-size: 14px;
+        }
 
-            .no-print {
-                display: none;
-            }
+        .center {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        td,
+        th {
+            padding: 4px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .right {
+            text-align: right;
         }
 
     </style>

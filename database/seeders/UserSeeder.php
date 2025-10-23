@@ -12,12 +12,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        $user = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin User',
                 'password' => 'password', // The 'password' attribute is automatically hashed by the User model's cast.
             ]
         );
+        $user->assignRole('Admin');
     }
 }

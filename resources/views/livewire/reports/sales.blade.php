@@ -62,25 +62,59 @@
         <table class="w-full">
             <thead>
                 <tr class="border-b bg-gray-50">
+                    <th class="p-3 w-12"></th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('created_at')">Date {!! $this->sortIcon('created_at') !!}</th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('invoice_no')">Invoice # {!! $this->sortIcon('invoice_no') !!}</th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('customer_id')">Customer {!! $this->sortIcon('customer_id') !!}</th>
-                    <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('branch_id')">Branch {!! $this->sortIcon('branch_id') !!}</th>
+                    <th class="p-3 text-right">Tax</th>
+                    <th class="p-3 text-right">Discount</th>
                     <th class="p-3 text-right cursor-pointer flex items-center justify-end" wire:click="sortBy('total')">Total {!! $this->sortIcon('total') !!}</th>
-                    <th class="p-3 text-right">Items</th>
-                    <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('user_id')">Cashier {!! $this->sortIcon('user_id') !!}</th>
+                    <th class="p-3 text-left">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody x-data="{ openSaleId: null }">
                 @forelse($sales as $sale)
                 <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 text-center">
+                        <button @click="openSaleId = openSaleId === {{ $sale->id }} ? null : {{ $sale->id }}">
+                            <ion-icon name="chevron-down-outline" x-show="openSaleId !== {{ $sale->id }}"></ion-icon>
+                            <ion-icon name="chevron-up-outline" x-show="openSaleId === {{ $sale->id }}"></ion-icon>
+                        </button>
+                    </td>
                     <td class="p-3">{{ $sale->created_at->format('d M Y, H:i') }}</td>
-                    <td class="p-3">{{ $sale->invoice_no }}</td>
+                    <td class="p-3 font-mono">{{ $sale->invoice_no }}</td>
                     <td class="p-3">{{ $sale->customer?->name ?? 'Walk-in' }}</td>
-                    <td class="p-3">{{ $sale->branch->name }}</td>
-                    <td class="p-3 text-right">{{ number_format($sale->total, 2) }}</td>
-                    <td class="p-3 text-right">{{ $sale->items->sum('quantity') }}</td>
-                    <td class="p-3">{{ $sale->user->name }}</td>
+                    <td class="p-3 text-right">{{ number_format($sale->tax, 2) }}</td>
+                    <td class="p-3 text-right">{{ number_format($sale->discount, 2) }}</td>
+                    <td class="p-3 text-right font-bold">{{ number_format($sale->total, 2) }}</td>
+                    <td class="p-3">
+                        <a href="{{ route('receipt.print', $sale) }}" target="_blank" class="text-blue-600 hover:underline">View Receipt</a>
+                    </td>
+                </tr>
+                <tr x-show="openSaleId === {{ $sale->id }}" x-transition>
+                    <td colspan="8" class="p-4 bg-gray-100">
+                        <h4 class="font-bold mb-2">Sale Items ({{ $sale->items->sum('quantity') }} total)</h4>
+                        <table class="w-full bg-white text-sm">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="p-2 text-left">Product</th>
+                                    <th class="p-2 text-right">Quantity</th>
+                                    <th class="p-2 text-right">Unit Price</th>
+                                    <th class="p-2 text-right">Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($sale->items as $item)
+                                <tr class="border-b">
+                                    <td class="p-2">{{ $item->productVariant->product->name }} - {{ $item->productVariant->label }}</td>
+                                    <td class="p-2 text-right">{{ $item->quantity }}</td>
+                                    <td class="p-2 text-right">{{ number_format($item->unit_price, 2) }}</td>
+                                    <td class="p-2 text-right font-semibold">{{ number_format($item->line_total, 2) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
                 @empty
                 <tr>

@@ -12,61 +12,51 @@
 </head>
 
 <body class="h-full antialiased text-black font-semibold" style="font-family: 'Josefin Sans';">
-    <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <nav class="container mx-auto p-3 flex justify-between items-center">
         {{-- Main Nav Links --}}
-        <div class="flex items-center gap-8">
-            <a wire:navigate.hover href="{{ route('pos') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('pos') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class="text-3xl" name="grid-outline"></ion-icon>
-                <span>POS</span>
-            </a>
 
-            {{-- Inventory Dropdown --}}
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                    <ion-icon class="text-3xl" name="archive-outline"></ion-icon>
-                    <span>Inventory</span>
-                </button>
-                <div x-show="open" @click.away="open = false" x-transition class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border">
-                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('inventory.products') ? 'font-bold text-blue-600' : '' }}">Products</a>
-                    <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('inventory.batches') ? 'font-bold text-blue-600' : '' }}">Stock Batches</a>
-                </div>
-            </div>
+        <a wire:navigate.prefetch href="{{ route('pos') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('pos') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="grid-outline"></ion-icon>
+            <span>POS</span>
+        </a>
 
-            <a wire:navigate.hover href="{{ route('customers.management') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('customers.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class="text-3xl" name="people-outline"></ion-icon>
-                <span>Customers</span>
-            </a>
-            <a wire:navigate.hover href="{{ route('reports.sales') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('reports.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class="text-3xl" name="stats-chart-outline"></ion-icon>
-                <span>Reports</span>
-            </a>
-            <a wire:navigate.hover href="{{ route('settings') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
-                <span>Settings</span>
-            </a>
+        {{-- Inventory Dropdown --}}
+        <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;" @mouseover="open = true" @mouseleave="open = false">
+            <ion-icon class="text-3xl" name="archive-outline"></ion-icon>
+            <span>Inventory</span>
+        </a>
+
+
+        <a wire:navigate.hover href="{{ route('customers.management') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('customers.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="people-outline"></ion-icon>
+            <span>Customers</span>
+        </a>
+        <a wire:navigate.hover href="{{ route('reports.sales') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('reports.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="stats-chart-outline"></ion-icon>
+            <span>Reports</span>
+        </a>
+
+        <a wire:navigate.hover href="{{ route('settings') }}" class="flex flex-col items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
+            <span>Settings</span>
+        </a>
         </div>
 
         {{-- Auth Section --}}
-        <div class="flex items-center gap-6">
+        <div class="flex items-center py-3 ">
             @auth
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="flex items-center gap-2 text-lg">
-                    <span>{{ auth()->user()->name }}</span>
-                    <ion-icon name="chevron-down-outline"></ion-icon>
-                </button>
-                <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                    <form method="POST" action="/logout">
-                        @csrf
-                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
-                    </form>
-                </div>
-            </div>
-            @else
-            <div class="flex items-center gap-4 text-lg">
-                <a href="/login" class="hover:text-blue-700">Sign In</a>
-                <a href="/register" class="bg-blue-600 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-700">Sign Up</a>
-            </div>
-            @endauth
+            <a href="/logout" class=" flex items-center gap-2 text-lg">
+                <span>{{ auth()->user()->name }}</span>
+                <ion-icon size="large" class="text-2xl hover:text-blue-700" name="close-outline"></ion-icon>
+            </a>
+        </div>
+
+        @else('guest')
+        <div class="flex items-center gap-4 text-lg">
+            <a href="/login" class="hover:text-blue-700">Sign In</a>
+            <a href="/register" class="bg-blue-600 text-blue-700 p-2 rounded-lg hover:bg-blue-700">Sign Up</a>
+        </div>
+        @endauth
         </div>
     </nav>
 
@@ -75,10 +65,26 @@
     </main>
 
     <footer class="text-center text-sm text-gray-500 p-4">
-        <p>© {{ date('Y') }} - Built with Laravel with ❤️</p>
+        <p> © {{ date('Y') }} - Laravel Build</p>
     </footer>
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
+
+{{-- <!doctype html>
+<html lang="en" x-data="{
+        theme: localStorage.getItem('theme') || 'light',
+        init() {
+            this.setTheme(this.theme);
+            window.addEventListener('theme-changed', e => this.setTheme(e.detail));
+        },
+        setTheme(theme) {
+            this.theme = theme;
+            localStorage.setItem('theme', theme);
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(theme);
+        }
+    }" class="h-full w-full relative bg-white bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] dark:bg-gray-900 dark:bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)]">
+--}}

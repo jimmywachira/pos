@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock};
+use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting};
 use Illuminate\Support\Facades\DB;
 use Safaricom\Mpesa\Mpesa;
 use Illuminate\Support\Facades\Auth;
@@ -16,12 +16,16 @@ class PointOfSale extends Component
     public $search = '';
     public $cart = [];
     public $customerId;
-    public $branchId = 1;
+    public $branchId = 3;
     public $amountPaid = 0;
     public $paymentMethod = 'cash';
     public $discount = 0;
     public $mpesaPhone;
     public $resumingSaleId = null;
+    public ?Customer $selectedCustomer = null;
+    public $loyaltyPointsToRedeem = 0;
+    public $loyaltyDiscount = 0;
+
 
     // State properties
     public $isProcessingMpesa = false;
@@ -29,6 +33,12 @@ class PointOfSale extends Component
     protected $paginationTheme = 'tailwind';
 
     // 🧠 Computed properties
+    public function updatedCustomerId($value)
+    {
+        $this->selectedCustomer = Customer::find($value);
+        $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
+    }
+
     public function getProductsProperty()
     {
         $query = ProductVariant::with('product')
@@ -38,7 +48,7 @@ class PointOfSale extends Component
                     ->orWhereHas('product', fn($p) => $p->where('name', 'like', "%{$this->search}%"));
             });
 
-        return $query->paginate(12); // Paginate product grid
+        return $query->paginate(10); // Paginate product grid
     }
 
     public function getSubtotalProperty()
@@ -53,7 +63,7 @@ class PointOfSale extends Component
 
     public function getGrandTotalProperty()
     {
-        return max(0, $this->subtotal + $this->tax - $this->discount);
+        return max(0, $this->subtotal + $this->tax - $this->discount - $this->loyaltyDiscount);
     }
 
     public function getChangeProperty()
@@ -65,6 +75,23 @@ class PointOfSale extends Component
         }
         return 0;
     }
+
+    public function applyLoyaltyPoints()
+    {
+        if (!$this->selectedCustomer || $this->loyaltyPointsToRedeem <= 0) {
+            return;
+        }
+
+        $pointsToRedeem = min($this->loyaltyPointsToRedeem, $this->selectedCustomer->loyalty_points);
+        $redeemValue = Setting::get('loyalty_redeem_value', 1);
+        
+        $this->loyaltyDiscount = $pointsToRedeem * $redeemValue;
+
+        // Ensure discount doesn't exceed subtotal
+        $this->loyaltyDiscount = min($this->loyaltyDiscount, $this->subtotal);
+        $this->loyaltyPointsToRedeem = $pointsToRedeem;
+    }
+
 
     // 🛒 Add to cart
     public function addToCart($variantId)
@@ -127,6 +154,8 @@ class PointOfSale extends Component
         $this->isProcessingMpesa = false;
         $this->discount = 0;
         $this->amountPaid = 0;
+        $this->loyaltyPointsToRedeem = 0;
+        $this->loyaltyDiscount = 0;
         $this->resumingSaleId = null;
     }
 
@@ -155,6 +184,7 @@ class PointOfSale extends Component
                     'total' => $this->grandTotal,
                     'tax' => $this->tax,
                     'discount' => $this->discount,
+                    'meta' => ['loyalty_discount' => $this->loyaltyDiscount, 'points_redeemed' => $this->loyaltyPointsToRedeem],
                     'paid' => floatval($this->amountPaid),
                     'payment_method' => 'cash',
                     'status' => 'completed',
@@ -172,6 +202,21 @@ class PointOfSale extends Component
                         ->where('product_variant_id', $item['id'])
                         ->decrement('quantity', $item['quantity']);
                 }
+
+            // Handle loyalty points
+            if ($this->selectedCustomer) {
+                // 1. Deduct redeemed points
+                if ($this->loyaltyPointsToRedeem > 0) {
+                    $this->selectedCustomer->decrement('loyalty_points', $this->loyaltyPointsToRedeem);
+                }
+
+                // 2. Award new points
+                $earnRate = Setting::get('loyalty_earn_rate', 100);
+                if ($earnRate > 0) {
+                    $pointsEarned = floor($this->subtotal / $earnRate);
+                    $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
+                }
+            }
                 return $sale;
             });
 
@@ -211,8 +256,33 @@ class PointOfSale extends Component
 
         $mpesa = new Mpesa();
         $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
-
         $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
+        
+        // $amount = (int) ceil($this->grandTotal);
+        // $businessShortCode = config('mpesa.shortcode');
+        // $passkey = config('mpesa.passkey');
+        // $callbackUrl = config('mpesa.stk_callback_url');
+
+        // $response = $mpesa->STKPushSimulation(
+        //     $businessShortCode,
+        //     $businessShortCode,
+        //     $passkey,
+        //     $amount,
+        //     $this->mpesaPhone,
+        //     $businessShortCode,
+        //     $this->mpesaPhone,
+        //     $callbackUrl,
+        //     $invoiceNo,
+        //     "POS payment {$invoiceNo}",
+        //     'POS'
+        // );
+
+        // $stkPush = is_string($response) ? json_decode($response, true) : (array) $response;
+
+        // $sale->update(['meta' => [
+        //     'checkout_request_id' => $stkPush['CheckoutRequestID'] ?? null,
+        //     'merchant_request_id' => $stkPush['MerchantRequestID'] ?? null
+        // ]]);
 
         $this->isProcessingMpesa = true;
         $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');

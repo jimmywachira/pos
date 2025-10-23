@@ -1,6 +1,16 @@
 <div class="p-6">
-    <h2 class="text-2xl font-bold mb-6">Stock Batches</h2>
+    <div class="flex justify-between items-center mb-4">
 
+        <nav class="container mx-auto p-4 space-x-4 flex justify-evenly items-center">
+            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
+            </a>
+            <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                <ion-icon class=" text-3xl" name="list-outline"></ion-icon> <span>Stock</span>
+            </a>
+
+        </nav>
+    </div>
     @if(session()->has('success'))
     <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
     @endif

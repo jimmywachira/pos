@@ -19,6 +19,8 @@
         "livewire/volt": "^1.7.0",
         "maatwebsite/excel": "^1.1",
         "predis/predis": "^3.2",
+        "pusher/pusher-php-server": "^7.2",
+        "safaricom/mpesa": "^1.0",
         "spatie/laravel-permission": "^6.21"
     },
     "require-dev": {

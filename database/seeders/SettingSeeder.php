@@ -13,5 +13,7 @@ class SettingSeeder extends Seeder
         Setting::set('tax', 16);
         Setting::set('store_name', 'My POS Shop');
         Setting::set('receipt_footer', 'Thank you for shopping with us!');
+        Setting::set('loyalty_earn_rate', 100); // Spend 100 to get 1 point
+        Setting::set('loyalty_redeem_value', 1); // 1 point is worth 1 Ksh
     }
 }

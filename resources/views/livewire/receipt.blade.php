@@ -14,7 +14,7 @@
 
     <table class="w-full text-sm mb-4">
         <thead>
-            <tr class="border-b">
+            <tr class="border-b text-center">
                 <th class="text-left">Item</th>
                 <th class="text-right">Qty</th>
                 <th class="text-right">Price</th>
