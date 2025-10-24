@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('shifts', function (Blueprint $table) {
-            // Add the foreign key after the 'user_id' column for organization
-            $table->foreignId('branch_id')->nullable()->constrained()->onDelete('cascade')->after('user_id');
+        Schema::create('cash_drawers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('shift_id')->constrained()->cascadeOnDelete();
+            $table->decimal('starting_cash', 14, 2);
+            $table->decimal('ending_cash', 14, 2)->nullable();
+            $table->timestamps();
         });
     }
 
@@ -22,11 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('shifts', function (Blueprint $table) {
-            // Drop the foreign key constraint before dropping the column
-            $table->dropForeign(['branch_id']);
-            $table->dropColumn('branch_id');
-        });
+        Schema::dropIfExists('cash_drawers');
     }
 };
-

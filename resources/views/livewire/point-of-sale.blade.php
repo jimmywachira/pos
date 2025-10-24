@@ -1,23 +1,35 @@
-<div class="flex h-[calc(100vh-80px)] bg-white text-black relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
+<div class="flex h-[calc(100vh-80px)] relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
 
+    @if(!$activeShift)
+    <div class="absolute inset-0 backdrop-blur-sm z-10 flex items-center justify-center">
+        <div class="text-center p-8  shadow-lg rounded-lg border">
+            <ion-icon name="stop-circle-outline" class="text-5xl text-red-500 mx-auto"></ion-icon>
+            <h2 class="text-2xl font-bold mt-4">No Active Shift</h2>
+            <p class="text-gray-600 mt-2">You must clock in to start a new sales session.</p>
+            <div class="mt-6">
+                <a href="{{ route('shifts.management') }}" wire:navigate class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Clock In</a>
+            </div>
+        </div>
+    </div>
+    @endif
     {{-- Products Section --}}
     <div class="@if(!empty($cart)) w-3/5 @else w-full @endif flex flex-col p-4 transition-all duration-300">
         <div class="mb-4 relative">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products..." class="w-full p-3 pl-10 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <ion-icon name="search-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></ion-icon>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products..." class="w-full uppercase p-3 pl-10 border-2 border-blue-600 rounded-lg focus:ring-2 focus:ring-blue-500 ">
+            <ion-icon size="large" name="search-circle-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-xl"></ion-icon>
         </div>
 
         {{-- Product Grid - Adjust columns based on cart visibility --}}
         <div class="flex-1 grid grid-cols-2 @if(!empty($cart)) md:grid-cols-3 lg:grid-cols-4 @else md:grid-cols-4 lg:grid-cols-6 @endif gap-4 overflow-y-auto p-2">
             @forelse($products as $product)
-            <div wire:click="addToCart({{ $product->id }})" class=" shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden" x-data="{ added: false }" @click="added = true; setTimeout(() => added = false, 800)">
+            <div wire:click="addToCart({{ $product->id }})" class=" shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 rounded-lg hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden" x-data="{ added: false }" @click="added = true; setTimeout(() => added = false, 800)">
                 <div class="relative">
                     <img src="{{ $product->product->image_url ?? 'https://picsum.photos/seed/' . $product->id . '/300/200' }}" alt="{{ $product->product->name }}" class="w-full h-32 object-cover">
                     <div x-show="added" x-transition class="absolute inset-0 bg-blue-500/60 flex items-center justify-center text-white text-lg font-semibold"></div>
                 </div>
-                <div class="p-3 flex flex-col flex-grow">
-                    <h3 class="text-md truncate">{{ $product->product->name }} - {{ $product->label }}</h3>
-                    <p class="font-semibold mt-auto text-blue-600 text-lg">Ksh {{ number_format($product->retail_price, 2) }}</p>
+                <div class="p-1 flex flex-col flex-grow">
+                    <h3 class="text-md  truncate">{{ $product->product->name }} - {{ $product->label }}</h3>
+                    <p class="font-semibold mt-2 text-blue-600 text-lg">Ksh {{ number_format($product->retail_price, 2) }}</p>
                 </div>
             </div>
             @empty
@@ -36,7 +48,7 @@
     {{-- Cart Section (conditional) --}}
     @if(!empty($cart))
     <div class="w-2/5 flex flex-col p-2  border border-black-50  border-gray-200 shadow-lg">
-        <h2 class="w-full py-3 hover:text-blue-200 disabled:opacity-50 flex items-center justify-center gap-2">
+        <h2 class="w-full py-3 disabled:opacity-50 flex items-center justify-center gap-2">
             Cart <ion-icon class="text-blue-600 big p-2 " size="large" name="cart-outline" aria-hidden="true"></ion-icon>( {{ count($cart) }} )
         </h2>
         @error('cart')
@@ -144,8 +156,8 @@
             @if ($paymentMethod === 'mpesa')
             <div class="mt-4 space-y-2">
                 <div class="flex justify-between items-center">
-                    <label for="mpesa_phone" class="font-semibold">Phone Number:</label>
-                    <input type="number" wire:model.live="mpesaPhone" id="mpesa_phone" placeholder="254..." class="w-1/2 p-2 text-right text-lg border-2 border-gray-200 rounded-full focus:ring-blue-500 focus:border-blue-500">
+                    <label for="mpesa_phone" class="font-bold">Phone Number:</label>
+                    <input type="number" wire:model.live="mpesaPhone" id="mpesa_phone" placeholder="254..." class="w-1/2 p-2 text-center text-2xl uppercase border-2 border-green-500 rounded-full focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 @error('mpesaPhone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
@@ -182,7 +194,7 @@
 
     {{-- Held Sales --}}
     @if($heldSales->count() > 0)
-    <div class="absolute bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 max-w-sm">
+    <div class="absolute bottom-4 left-4  p-4 rounded-lg shadow-lg border border-gray-200 max-w-sm">
         <h3 class="mb-2 flex items-center gap-2">
             <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
         </h3>

@@ -1,50 +1,80 @@
-<div class="p-6 max-w-md mx-auto bg-white shadow rounded">
-    <h1 class="text-xl font-bold mb-2 text-center">Supermarket Receipt</h1>
-    <p class="text-center text-sm text-gray-600 mb-4">
-        Invoice: {{ $sale->invoice_no }} | Date: {{ $sale->created_at->format('d M Y H:i') }}
-    </p>
+<x-receipt-layout :sale="$sale">
+    <div class="max-w-xs mx-auto bg-white p-4 shadow-lg my-4 text-sm">
+        @if(isset($settings['logo']) && $settings['logo'])
+        <img src="{{ asset('storage/' . $settings['logo']) }}" alt="Store Logo" class="mx-auto h-16 w-auto mb-4">
+        @endif
+        <div class="text-center mb-4">
+            <h1 class="text-xl font-bold uppercase">{{ $settings['store_name'] ?? 'DemoPOS' }}</h1>
+            <p>{{ $sale->branch->name }}</p>
+            <p>{{ $sale->branch->address }}</p>
+        </div>
 
-    <p><strong>Branch:</strong> {{ $sale->branch->name }}</p>
-    <p><strong>Cashier:</strong> {{ $sale->user->name }}</p>
-    @if($sale->customer)
-    <p><strong>Customer:</strong> {{ $sale->customer->name }}</p>
-    @endif
+        <div class="mb-4">
+            <p><strong>Date:</strong> {{ $sale->created_at->format('d/m/Y H:i:s') }}</p>
+            <p><strong>Invoice:</strong> {{ $sale->invoice_no }}</p>
+            <p><strong>Cashier:</strong> {{ $sale->user->name }}</p>
+            @if($sale->customer)
+            <p><strong>Customer:</strong> {{ $sale->customer->name }}</p>
+            @endif
+        </div>
 
-    <hr class="my-3">
+        <div class="border-t border-b border-dashed border-black py-2">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="text-left">ITEM</th>
+                        <th class="text-right">QTY</th>
+                        <th class="text-right">PRICE</th>
+                        <th class="text-right">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sale->items as $item)
+                    <tr>
+                        <td colspan="4">{{ $item->productVariant->product->name }} - {{ $item->productVariant->label }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-right">{{ $item->quantity }}</td>
+                        <td class="text-right">{{ number_format($item->unit_price, 2) }}</td>
+                        <td class="text-right">{{ number_format($item->line_total, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-    <table class="w-full text-sm mb-4">
-        <thead>
-            <tr class="border-b text-center">
-                <th class="text-left">Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($sale->items as $item)
-            <tr>
-                <td>{{ $item->productVariant->product->name }} - {{ $item->productVariant->label }}</td>
-                <td class="text-right">{{ $item->quantity }}</td>
-                <td class="text-right">{{ number_format($item->unit_price, 2) }}</td>
-                <td class="text-right">{{ number_format($item->line_total, 2) }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="py-2">
+            <table class="w-full">
+                <tbody>
+                    <tr>
+                        <td class="font-semibold">Subtotal</td>
+                        <td class="text-right">{{ number_format($sale->total - $sale->tax + $sale->discount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold">Tax</td>
+                        <td class="text-right">{{ number_format($sale->tax, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold">Discount</td>
+                        <td class="text-right">-{{ number_format($sale->discount, 2) }}</td>
+                    </tr>
+                    <tr class="font-bold text-base border-t border-dashed border-black">
+                        <td>GRAND TOTAL</td>
+                        <td class="text-right">{{ number_format($sale->total, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="text-right">
-        <div>Subtotal: Ksh {{ number_format($sale->total - $sale->tax + $sale->discount, 2) }}</div>
-        <div>Tax: Ksh {{ number_format($sale->tax, 2) }}</div>
-        <div>Discount: Ksh {{ number_format($sale->discount, 2) }}</div>
-        <div class="font-bold text-lg">Grand Total: Ksh {{ number_format($sale->total, 2) }}</div>
+        <div class="text-center pt-2 border-t border-dashed border-black">
+            <p class="font-semibold">{{ $settings['receipt_footer'] ?? 'Thank you for your purchase!' }}</p>
+        </div>
+
+        <div class="text-center mt-6 no-print">
+            <button onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded-md text-base hover:bg-black">
+                Print Receipt
+            </button>
+        </div>
     </div>
-
-    <hr class="my-3">
-
-    <p class="text-center text-sm text-gray-600">Thank you for shopping with us!</p>
-
-    <div class="text-center mt-4">
-        <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded">Print Receipt</button>
-    </div>
-</div>
+</x-receipt-layout>

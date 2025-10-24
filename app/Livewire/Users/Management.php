@@ -91,6 +91,16 @@ class Management extends Component
         $this->closeModal();
     }
 
+    public function updateRole(User $user, $newRole)
+    {
+        if ($user->id === auth()->id() && $newRole !== 'Admin') {
+            session()->flash('error', 'You cannot remove your own Admin role.');
+            $this->dispatch('role-change-reverted'); // Dispatch event to revert UI
+            return;
+        }
+        $user->syncRoles($newRole);
+    }
+
     public function confirmDelete($userId)
     {
         $this->deletingUserId = $userId;

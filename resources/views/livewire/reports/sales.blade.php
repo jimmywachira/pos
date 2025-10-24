@@ -2,18 +2,18 @@
     <h2 class="text-2xl font-bold mb-6">Sales Report</h2>
 
     <!-- Filters -->
-    <div class="bg-white shadow rounded-lg p-4 mb-6">
+    <div class=" shadow rounded-lg p-4 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Start Date</label>
+                <label class="block  text-gray-700">Start Date</label>
                 <input type="date" wire:model.live="startDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">End Date</label>
+                <label class="block  text-gray-700">End Date</label>
                 <input type="date" wire:model.live="endDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Branch</label>
+                <label class="block  text-gray-700">Branch</label>
                 <select wire:model.live="branchId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     <option value="all">All Branches</option>
                     @foreach($branches as $branch)
@@ -22,7 +22,7 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Customer</label>
+                <label class="block  text-gray-700">Customer</label>
                 <select wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     <option value="all">All Customers</option>
                     @foreach($customers as $customer)
@@ -31,7 +31,7 @@
                 </select>
             </div>
             <div class="lg:col-span-4">
-                <label class="block text-sm font-medium text-gray-700">Search by Invoice #</label>
+                <label class="block  text-gray-700">Search by Invoice #</label>
                 <input type="text" wire:model.live.debounce.300ms="search" placeholder="INV-..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
             </div>
         </div>
@@ -39,26 +39,26 @@
 
     <!-- Aggregates -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Sales</h3>
             <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_sales'], 2) }}</p>
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Tax</h3>
             <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_tax'], 2) }}</p>
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Discount</h3>
             <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_discount'], 2) }}</p>
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Profit</h3>
             <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_profit'], 2) }}</p>
         </div>
     </div>
 
     <!-- Sales Table -->
-    <div class="bg-white shadow rounded-lg overflow-x-auto">
+    <div class=" shadow rounded-lg overflow-x-auto">
         <table class="w-full">
             <thead>
                 <tr class="border-b bg-gray-50">
@@ -82,7 +82,7 @@
                         </button>
                     </td>
                     <td class="p-3">{{ $sale->created_at->format('d M Y, H:i') }}</td>
-                    <td class="p-3 font-mono">{{ $sale->invoice_no }}</td>
+                    <td class="p-3 ">{{ $sale->invoice_no }}</td>
                     <td class="p-3">{{ $sale->customer?->name ?? 'Walk-in' }}</td>
                     <td class="p-3 text-right">{{ number_format($sale->tax, 2) }}</td>
                     <td class="p-3 text-right">{{ number_format($sale->discount, 2) }}</td>
@@ -94,7 +94,7 @@
                 <tr x-show="openSaleId === {{ $sale->id }}" x-transition>
                     <td colspan="8" class="p-4 bg-gray-100">
                         <h4 class="font-bold mb-2">Sale Items ({{ $sale->items->sum('quantity') }} total)</h4>
-                        <table class="w-full bg-white text-sm">
+                        <table class="w-full ">
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="p-2 text-left">Product</th>

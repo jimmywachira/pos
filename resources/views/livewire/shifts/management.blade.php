@@ -1,6 +1,20 @@
-<div class="p-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6">Shift Management</h2>
+<div class="p-6 bg-white/50 rounded-lg shadow">
+    <nav wire:navigate class="flex justify-evenly mb-6" x-data="{ open: false }">
+        <a wire:navigate.hover href="{{ route('settings') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
+            <span>settings</span>
+        </a>
 
+        <a wire:navigate.hover href="{{ route('shifts.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="people-outline"></ion-icon>
+            <span>shifts</span>
+        </a>
+
+        <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+            <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
+            <span>role</span>
+        </a>
+    </nav>
     @if(session()->has('success'))
     <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
     @endif

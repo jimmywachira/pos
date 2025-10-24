@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('shifts', function (Blueprint $table) {
-            //
+            $table->string('status')->default('active')->after('clock_out');
+
+            $table->index('status');
+            $table->index('clock_in');
+            $table->index('clock_out');
         });
     }
 
@@ -22,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('shifts', function (Blueprint $table) {
-            //
+            $table->dropIndex(['status', 'clock_in', 'clock_out']);
+            $table->dropColumn('status');
         });
     }
 };

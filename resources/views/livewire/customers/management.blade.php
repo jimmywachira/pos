@@ -1,23 +1,23 @@
-<div class="p-6 text-black">
+<div class="p-6 ">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Customers</h2>
-        <button wire:click="create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Customer</button>
+        <button wire:click="create" class="border-2 uppercase border-blue-500 text-blue-500 px-4 py-2 hover:bg-blue-500 hover:text-white">Add Customer</button>
     </div>
 
     @if(session()->has('success'))
-    <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
+    <div class="border-2 border-green-100 text-green-800 p-3 mb-4">{{ session('success') }}</div>
     @endif
 
     <!-- Search and Filters -->
-    <div class="mb-4">
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name, email, or phone..." class="w-full border rounded p-2">
+    <div class="mb-4 ">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name, email, or phone..." class="w-full text-3xl uppercase border  p-2">
     </div>
 
     <!-- Customers Table -->
-    <div class="bg-white shadow rounded-lg overflow-x-auto">
+    <div class=" shadow rounded-b-lg overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="border-b">
+                <tr class="border-b shadow-lg bg-gray-400/50">
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('email')">Email</th>
                     <th class="p-3 text-left">Phone</th>

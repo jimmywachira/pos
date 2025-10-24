@@ -91,6 +91,15 @@ class Management extends Component
         $this->closeModal();
     }
 
+    public function updateRole(User $user, $newRole)
+    {
+        if ($user->id === auth()->id() && $newRole !== 'Admin') {
+            session()->flash('error', 'You cannot remove your own Admin role.');
+            return;
+        }
+        $user->syncRoles($newRole);
+    }
+
     public function confirmDelete($userId)
     {
         $this->deletingUserId = $userId;
@@ -99,7 +108,15 @@ class Management extends Component
 
     public function delete()
     {
-        User::find($this->deletingUserId)->delete();
+        $user = User::find($this->deletingUserId);
+
+        if ($user && $user->id === auth()->id()) {
+            session()->flash('error', 'You cannot delete your own account.');
+            $this->showDeleteModal = false;
+            return;
+        }
+
+        $user?->delete();
         $this->showDeleteModal = false;
         session()->flash('success', 'User deleted successfully.');
     }

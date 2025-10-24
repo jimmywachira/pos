@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting};
+use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting, Shift};
 use Illuminate\Support\Facades\DB;
 use Safaricom\Mpesa\Mpesa;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class PointOfSale extends Component
     public $search = '';
     public $cart = [];
     public $customerId;
-    public $branchId = 3;
+    public $branchId;
     public $amountPaid = 0;
     public $paymentMethod = 'cash';
     public $discount = 0;
@@ -25,12 +25,25 @@ class PointOfSale extends Component
     public ?Customer $selectedCustomer = null;
     public $loyaltyPointsToRedeem = 0;
     public $loyaltyDiscount = 0;
+    public ?Shift $activeShift = null;
 
 
     // State properties
     public $isProcessingMpesa = false;
 
     protected $paginationTheme = 'tailwind';
+
+    public function mount()
+    {
+        $this->activeShift = Shift::where('user_id', Auth::id())
+            ->where('status', 'active')
+            ->first();
+
+        if ($this->activeShift) {
+            $this->branchId = $this->activeShift->branch_id;
+        }
+        // If there's no active shift, the user shouldn't be able to make sales.
+    }
 
     // 🧠 Computed properties
     public function updatedCustomerId($value)
@@ -96,6 +109,11 @@ class PointOfSale extends Component
     // 🛒 Add to cart
     public function addToCart($variantId)
     {
+        if (!$this->activeShift) {
+            $this->dispatch('flash-message', message: 'You must have an active shift to make a sale.', type: 'error');
+            return;
+        }
+
         $stock = Stock::where('product_variant_id', $variantId)
                       ->where('branch_id', $this->branchId)
                       ->first();

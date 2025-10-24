@@ -27,6 +27,11 @@ class Receipt extends Component
     public function render()
     {
         return view('livewire.receipt')// Use a dedicated layout for printing
-            ->layout('layouts.receipt'); // Use a dedicated layout for printing
+            ->layout('layouts.receipt');
+    }
+
+    public function layoutData()
+    {
+        return ['sale' => $this->sale];
     }
 }

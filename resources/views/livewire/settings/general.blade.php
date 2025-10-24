@@ -1,9 +1,8 @@
-<div class=" shadow rounded-2xl p-6 max-w-xl mx-auto border border-black-50 bg-white/75">
-
+<div class="p-6 rounded-lg shadow">
     <nav wire:navigate class="flex justify-evenly mb-6" x-data="{ open: false }">
-        <a class="flex justify-evenly items-center font-bold text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+        <a wire:navigate.hover href="{{ route('settings') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
-            <span></span>
+            <span>settings</span>
         </a>
 
         <a wire:navigate.hover href="{{ route('shifts.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
@@ -15,8 +14,6 @@
             <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
             <span>role</span>
         </a>
-
-
     </nav>
 
     @if(session()->has('success'))
@@ -24,6 +21,18 @@
         {{ session('success') }}
     </div>
     @endif
+
+    <div class="border-t pt-6 mb-6">
+        <h3 class="text-lg font-medium">Active Branch</h3>
+        <div class="mt-4 flex items-center justify-between">
+            <div>
+                <p class="text-gray-600">You are currently clocked in at:</p>
+                <p class="font-bold text-xl">{{ auth()->user()->activeShift->branch->name ?? 'N/A' }}</p>
+                <p class="text-sm text-gray-500">{{ auth()->user()->activeShift->branch->address ?? 'You do not have an active shift.' }}</p>
+            </div>
+            <a href="{{ route('shifts.management') }}" wire:navigate class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Switch Branch</a>
+        </div>
+    </div>
 
     <form wire:submit.prevent="save">
         <div class="space-y-6">
