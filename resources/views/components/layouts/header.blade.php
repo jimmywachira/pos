@@ -1,38 +1,45 @@
-<header x-data="{ open: false }" class="shadow p-5 text-center mb-6">
+<header x-data="{ open: false }" class="backdrop-blur p-5 text-center mb-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <a href="{{ route('pos') }}" class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-md bg-blue-50 text-blue-600">
-                        <ion-icon name="grid-outline" class="text-xl"></ion-icon>
-                    </span>
-                    <span class="hidden sm:inline">DemoPOS</span>
-                </a>
+
 
                 <nav class="hidden md:flex items-center space-x-4" aria-label="Primary navigation">
-                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('inventory.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">Inventory</a>
-                    <a wire:navigate.hover href="{{ route('customers.management') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('customers.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">Customers</a>
-                    <a wire:navigate.hover href="{{ route('reports.sales') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">Reports</a>
-                    <a wire:navigate.hover href="{{ route('settings') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('settings.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">Settings</a>
+                    <a wire:navigate.hover href="{{ route('pos') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('pos*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="grid-outline" class="text-xl"></ion-icon> DemoPOS
+                    </a>
+
+                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('inventory.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="server-outline" class="text-xl"></ion-icon> Inventory
+                    </a>
+                    <a wire:navigate.hover href="{{ route('customers.management') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('customers.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="people-outline" class="text-xl"></ion-icon> Customers
+                    </a>
+                    <a wire:navigate.hover href="{{ route('reports.sales') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('reports.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="bar-chart-outline" class="text-xl"></ion-icon> Reports
+                    </a>
+                    <a wire:navigate.hover href="{{ route('settings') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('settings.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="settings-outline" class="text-xl"></ion-icon> Settings
+                    </a>
                 </nav>
             </div>
 
             <div class="flex items-center gap-4">
                 @auth
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm text-gray-700">{{ auth()->user()->name }}</span>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" title="Log out" class="text-gray-500 hover:text-red-600 focus:outline-none">
-                                <ion-icon name="power-outline" class="text-xl"></ion-icon>
-                            </button>
-                        </form>
-                    </div>
+                <div class="flex items-center gap-3">
+                    <span class=" py-1 px-2">{{ Str::substr(auth()->user()->name, 0, 3) }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" title="Log out" class="text-blue-500 hover:text-red-600 focus:outline-none">
+                            <ion-icon size="large" name="close-outline" class="text-xl"></ion-icon>
+                        </button>
+                    </form>
+                </div>
                 @else
-                    <div class="flex items-center gap-3">
-                        <a href="/login" class="text-sm text-gray-700 hover:text-blue-600">Sign in</a>
-                        <a href="/register" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">Sign up</a>
-                    </div>
+                <div class="flex items-center gap-3">
+                    <a href="/login" class="text-sm text-gray-700 hover:text-blue-600">Sign in</a>
+                    <a href="/register" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white  rounded-md hover:bg-blue-700">Sign up</a>
+                </div>
                 @endauth
 
                 <!-- Mobile Menu Button -->

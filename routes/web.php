@@ -39,4 +39,50 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/about', function () {
+    return view('components.layouts.about');
+})->name('about');
+
+Route::get('/press', function () {
+    return view('components.layouts.press');
+})->name('press');
+
+Route::get('/blog', function () {
+    return view('components.layouts.blog');
+})->name('blog');
+
+Route::get('/jobs', function () {
+    return view('components.layouts.jobs');
+})->name('jobs');
+
+Route::get('/pricing', function () {
+    return view('components.layouts.pricing');
+})->name('pricing');
+
+Route::get('/documentation', function () {
+    return view('components.layouts.documentation');
+})->name('documentation');
+
+Route::get('/guides', function () {
+    return view('components.layouts.guides');
+})->name('guides');
+
+Route::get('/api-status', function () {
+    return view('components.layouts.api-status');
+})->name('api-status');
+
+
+Route::get('/claim', function () {
+    return view('components.layouts.claim');
+})->name('claim');
+
+Route::get('/privacy', function () {
+    return view('components.layouts.privacy');
+})->name('privacy');
+
+Route::get('/terms', function () {
+    return view('components.layouts.terms');
+})->name('terms');
+
+
 require __DIR__.'/auth.php';

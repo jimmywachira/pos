@@ -1,4 +1,4 @@
-<div class="p-6 bg-white/50 rounded-lg shadow">
+<div class="p-6 rounded-lg shadow">
     <nav wire:navigate class="flex justify-evenly mb-6" x-data="{ open: false }">
         <a wire:navigate.hover href="{{ route('settings') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('settings') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
@@ -22,7 +22,7 @@
     <div class="bg-red-100 text-red-800 p-3 rounded mb-4">{{ session('error') }}</div>
     @endif
 
-    <div class="bg-white shadow rounded-lg p-6">
+    <div class=" shadow rounded-lg p-6">
         @if ($currentShift)
         {{-- Clocked In State --}}
         <div class="text-center">
@@ -41,10 +41,10 @@
         @else
         {{-- Clocked Out State --}}
         <div class="text-center">
-            <h3 class="text-xl font-semibold text-gray-700">You are currently Clocked Out</h3>
+            <h3 class="text-xl font-semibold ">You are currently Clocked Out</h3>
             <p class="text-gray-500 mt-2">Start a new shift to begin making sales.</p>
             <div class="mt-6">
-                <button wire:click="openClockInModal" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-bold text-lg">
+                <button wire:click="openClockInModal" class="bg-blue-600  px-6 py-3 rounded-lg hover:bg-blue-700 font-bold text-lg">
                     Start Shift / Clock In
                 </button>
             </div>

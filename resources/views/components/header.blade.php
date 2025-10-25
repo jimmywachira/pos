@@ -4,9 +4,10 @@
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
                         {{-- Replace with your logo if you have one --}}
-                        <a href="{{ route('pos') }}" class="text-2xl font-bold text-gray-800">
-                            Demo<span class="text-blue-600">POS</span>
-                        </a>
+                        <x-nav-link :href="route('pos')" :active="request()->routeIs('pos')">
+                            <ion-icon size="large" name="grid-outline" class="text-xl"></ion-icon>
+                            <span class="text-xl font-bold">System</span>
+                        </x-nav-link>
                     </div>
                     <!-- Desktop Navigation -->
                     <div class="hidden md:ml-6 md:flex md:space-x-4">

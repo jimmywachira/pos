@@ -1,5 +1,4 @@
 <div>
-    <x-header />
     <div class="flex h-[calc(100vh-80px)] relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
         @if(!$activeShift)
         <div class="absolute inset-0 backdrop-blur-sm z-10 flex items-center justify-center">

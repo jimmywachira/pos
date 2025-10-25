@@ -11,10 +11,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class=" antialiased font-semibold text-2xl uppercase">
+<body class=" antialiased font-semibold text-2xl uppercase backdrop-blur">
 
     {{-- Use the component implementation for backward compatibility. --}}
     <x-layouts.app :title="$title ?? null">
         {{ $slot ?? null }}
     </x-layouts.app>
-    <footer class="text-center text-black p-4">
+    <footer class="text-center p-4">
