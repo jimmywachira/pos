@@ -1,81 +1,49 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<x-layouts.app>
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6">Login </h2>
+        <form method="POST" action="{{ route('login') }}" class="space-y-6">
+            @csrf
 
-    <div class="text-center mb-8">
-        {{-- You can replace this with your logo --}}
-        <h1 class="text-3xl font-bold text-gray-800 tracking-tight">
-            Your<span class="text-blue-600">POS</span>
-        </h1>
-        <p class="text-gray-500 mt-2">Sign in to continue to your dashboard.</p>
-    </div>
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div class="mb-4 relative">
-            <x-input-label for="email" :value="__('Email')" />
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pt-7 pointer-events-none">
-                <ion-icon name="mail-outline" class="text-gray-400"></ion-icon>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                @error('email')
+                <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <x-text-input id="email" class="block mt-1 w-full pl-10" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="you@example.com" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
 
-        <!-- Password -->
-        <div class="mb-4 relative">
-            <x-input-label for="password" :value="__('Password')" />
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pt-7 pointer-events-none">
-                <ion-icon name="lock-closed-outline" class="text-gray-400"></ion-icon>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input id="password" type="password" name="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                @error('password')
+                <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <x-text-input id="password" class="block mt-1 w-full pl-10" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
 
-        <!-- Remember Me & Forgot Password -->
-        <div class="flex items-center justify-between text-sm">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-gray-600">{{ __('Remember me') }}</span>
-            </label>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember_me" type="checkbox" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="remember_me" class="ml-2 block text-sm text-gray-900">Remember Me</label>
+                </div>
 
-            @if (Route::has('password.request'))
-            <a class="font-medium text-blue-600 hover:text-blue-500" href="{{ route('password.request') }}">
-                {{ __('Forgot your password?') }}
-            </a>
-            @endif
-        </div>
+                <div class="text-sm">
+                    <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
+                </div>
+            </div>
 
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Log in
+                </button>
+            </div>
+        </form>
         <div class="mt-6">
-            <x-primary-button class="w-full justify-center py-3 text-sm font-semibold">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-
-        <div class="relative my-6">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-gray-300"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-                <span class="bg-white px-2 text-gray-500">Or continue with</span>
-            </div>
-        </div>
-
-        <div>
-            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                <span class="sr-only">Sign in with Google</span>
-                <ion-icon name="logo-google" class="text-xl"></ion-icon>
-            </a>
-        </div>
-
-        <div class="text-center mt-8">
-            <p class="text-sm text-gray-600">
-                {{ __("Don't have an account?") }}
-                <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                    {{ __('Register here') }}
-                </a>
+            <p class="text-center text-sm text-gray-600">
+                Don't have an account?
+                <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:text-blue-500">Sign up</a>
             </p>
         </div>
-    </form>
-</x-guest-layout>
+
+    </div>
+
+</x-layouts.app>
