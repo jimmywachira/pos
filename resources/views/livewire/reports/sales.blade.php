@@ -1,5 +1,5 @@
 <div class="p-6">
-    <h2 class="text-2xl font-bold mb-6">Sales Report</h2>
+    <h2 class=" font-bold mb-6">Sales Report</h2>
 
     <!-- Filters -->
     <div class=" shadow rounded-lg p-4 mb-6">
@@ -22,7 +22,7 @@
                 </select>
             </div>
             <div>
-                <label class="block  text-gray-700">Customer</label>
+                <label class="block text-gray-700">Customer</label>
                 <select wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     <option value="all">All Customers</option>
                     @foreach($customers as $customer)
@@ -37,23 +37,37 @@
         </div>
     </div>
 
+    <!-- Charts/Infographics -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6" wire:ignore>
+        <div class="lg:col-span-3 shadow rounded-lg p-4" x-data="salesTrendChart" x-init="initChart(@json($this->salesTrendData))" @update-charts.window="updateChart($event.detail.salesTrendData)">
+            <h3 class="font-bold text-gray-800 mb-2">Sales Trend</h3>
+            <div class="h-64">
+                <canvas x-ref="chartCanvas"></canvas>
+            </div>
+        </div>
+        <div class="lg:col-span-2 shadow rounded-lg p-4" x-data="salesByBranchChart" x-init="initChart(@json($this->salesByBranchData))" @update-charts.window="updateChart($event.detail.salesByBranchData)">
+            <h3 class="font-bold text-gray-800 mb-2">Sales by Branch</h3>
+            <div class="h-64"><canvas x-ref="chartCanvas"></canvas></div>
+        </div>
+    </div>
+
     <!-- Aggregates -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Sales</h3>
-            <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_sales'], 2) }}</p>
+            <p class=" font-bold">Ksh {{ number_format($this->aggregates['total_sales'], 2) }}</p>
         </div>
         <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Tax</h3>
-            <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_tax'], 2) }}</p>
+            <p class=" font-bold">Ksh {{ number_format($this->aggregates['total_tax'], 2) }}</p>
         </div>
         <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Discount</h3>
-            <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_discount'], 2) }}</p>
+            <p class=" font-bold">Ksh {{ number_format($this->aggregates['total_discount'], 2) }}</p>
         </div>
         <div class=" shadow rounded-lg p-4">
             <h3 class="text-gray-500">Total Profit</h3>
-            <p class="text-2xl font-bold">Ksh {{ number_format($this->aggregates['total_profit'], 2) }}</p>
+            <p class=" font-bold">Ksh {{ number_format($this->aggregates['total_profit'], 2) }}</p>
         </div>
     </div>
 
@@ -61,8 +75,8 @@
     <div class=" shadow rounded-lg overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="border-b bg-gray-50">
-                    <th class="p-3 w-12"></th>
+                <tr class="border-b backdrop-blur-md">
+                    <th class="p-3 "></th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('created_at')">Date {!! $this->sortIcon('created_at') !!}</th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('invoice_no')">Invoice # {!! $this->sortIcon('invoice_no') !!}</th>
                     <th class="p-3 text-left cursor-pointer flex items-center" wire:click="sortBy('customer_id')">Customer {!! $this->sortIcon('customer_id') !!}</th>
@@ -92,10 +106,10 @@
                     </td>
                 </tr>
                 <tr x-show="openSaleId === {{ $sale->id }}" x-transition>
-                    <td colspan="8" class="p-4 bg-gray-100">
+                    <td colspan="8" class="p-3 backdrop-blur-sm bg-white/50">
                         <h4 class="font-bold mb-2">Sale Items ({{ $sale->items->sum('quantity') }} total)</h4>
-                        <table class="w-full ">
-                            <thead class="bg-gray-200">
+                        <table class="w-full table-auto border-collapse">
+                            <thead class="backdrop-blur-sm">
                                 <tr>
                                     <th class="p-2 text-left">Product</th>
                                     <th class="p-2 text-right">Quantity</th>
@@ -128,4 +142,77 @@
     <div class="mt-4">
         {{ $sales->links() }}
     </div>
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('salesTrendChart', () => ({
+                chart: null
+                , initChart(data) {
+                    const ctx = this.$refs.chartCanvas.getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'line'
+                        , data: {
+                            labels: data.labels
+                            , datasets: [{
+                                label: 'Total Sales'
+                                , data: data.values
+                                , backgroundColor: 'rgba(37, 99, 235, 0.2)'
+                                , borderColor: 'rgba(37, 99, 235, 1)'
+                                , borderWidth: 2
+                                , fill: true
+                                , tension: 0.3
+                            }]
+                        }
+                        , options: {
+                            responsive: true
+                            , maintainAspectRatio: false
+                            , scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+                , updateChart(data) {
+                    if (this.chart) {
+                        this.chart.data.labels = data.labels;
+                        this.chart.data.datasets[0].data = data.values;
+                        this.chart.update();
+                    }
+                }
+            }));
+
+            Alpine.data('salesByBranchChart', () => ({
+                chart: null
+                , initChart(data) {
+                    const ctx = this.$refs.chartCanvas.getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'doughnut'
+                        , data: {
+                            labels: data.labels
+                            , datasets: [{
+                                data: data.values
+                            }]
+                        }
+                        , options: {
+                            responsive: true
+                            , maintainAspectRatio: false
+                        }
+                    });
+                }
+                , updateChart(data) {
+                    if (this.chart) {
+                        this.chart.data.labels = data.labels;
+                        this.chart.data.datasets[0].data = data.values;
+                        this.chart.update();
+                    }
+                }
+            }));
+        });
+
+    </script>
+    @endpush
 </div>

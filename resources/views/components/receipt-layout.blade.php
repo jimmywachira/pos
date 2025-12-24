@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
-            font-family: 'Delicious Handrawn', cursive;
+            font-family: 'Google Sans Code', sans-serif;
         }
 
         @media print {

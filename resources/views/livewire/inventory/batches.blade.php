@@ -1,7 +1,6 @@
-<div class="p-6 uppercase text-xl">
-    <div class="flex justify-between items-center mb-4">
-
-        <nav class=" mx-auto p-4 space-x-4 flex justify-evenly items-center">
+<div class="p-4  text-xl ">
+    <div class="mb-4">
+        <nav class="flex justify-evenly space-x-4  items-center mb-4 mx-auto p-4 ">
             <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
             </a>
@@ -17,7 +16,7 @@
     <!-- Filters -->
     <div class=" shadow p-4 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by product name or SKU..." class="md:col-span- uppercase w-full text-2xl border-gray-300 shadow-sm">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by product name or SKU..." class="md:col-span-1 w-full  border-gray-300 shadow-sm">
 
             <div>
                 <label class="block ">Branch</label>
@@ -30,7 +29,7 @@
             </div>
             <div>
                 <label class="block ">Expiry Status</label>
-                <select wire:model.live="expiryFilter" class="mt-1 block w-full border-gray-300 shadow-sm">
+                <select wire:model.live="expiryFilter" class="mt-1 block text-xl  w-full border-gray-300 shadow-sm">
                     <option value="all">All</option>
                     <option value="expiring_soon">Expiring Soon (30 days)</option>
                     <option value="expired">Expired</option>
@@ -43,8 +42,8 @@
     <div class=" shadow overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="border-b ">
-                    <th class="p-3 text-left">Product</th>
+                <tr class="border-b-2 p-3 ">
+                    <th class="p-3  text-left">Product</th>
                     <th class="p-3 text-left">Branch</th>
                     <th class="p-3 text-right cursor-pointer" wire:click="sortBy('quantity')">Quantity</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('expiry_date')">Expiry Date</th>
@@ -60,7 +59,7 @@
                 <tr class="border-b hover:bg-gray-50 {{ $isExpired ? 'bg-red-50' : ($isExpiringSoon ? 'bg-yellow-50' : '') }}">
                     <td class="p-3">
                         {{ $stock->productVariant->product->name }} - {{ $stock->productVariant->label }}
-                        <span class="block text-xs text-gray-500">SKU: {{ $stock->productVariant->product->sku }}</span>
+                        <span class="block  text-gray-500">SKU: {{ $stock->productVariant->product->sku }}</span>
                     </td>
                     <td class="p-3">{{ $stock->branch->name }}</td>
                     <td class="p-3 text-right font-bold">{{ $stock->quantity }}</td>
@@ -68,9 +67,9 @@
                         @if($stock->expiry_date)
                         {{ \Carbon\Carbon::parse($stock->expiry_date)->format('d M Y') }}
                         @if($isExpired)
-                        <span class="ml-2 text-xs font-semibold text-red-600">Expired</span>
+                        <span class="ml-2  font-semibold text-red-600">Expired</span>
                         @elseif($isExpiringSoon)
-                        <span class="ml-2 text-xs font-semibold text-yellow-600">Expiring Soon</span>
+                        <span class="ml-2  font-semibold text-yellow-600">Expiring Soon</span>
                         @endif
                         @else
                         <span class="text-gray-400">N/A</span>
@@ -95,17 +94,17 @@
 
     <!-- Stock Adjustment Modal -->
     @if($showStockModal)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="fixed inset-0  bg-opacity-500 flex items-center justify-center z-50">
         <div class=" shadow-lg p-6 w-full max-w-lg">
-            <h3 class="text-xl font-bold mb-2">Adjust Stock</h3>
-            <p class="text-gray-600 mb-4">Product: <span class="font-semibold">{{ $editingStockVariantName }}</span></p>
-            <p class="text-gray-600 mb-4">Current Quantity: <span class="font-semibold">{{ $currentQuantity }}</span></p>
+            <h3 class="text-xl font-bold ">Adjust Stock</h3>
+            <p class="text-gray-600 ">Product: <span class="font-semibold">{{ $editingStockVariantName }}</span></p>
+            <p class="text-gray-600 ">Current Quantity: <span class="font-semibold">{{ $currentQuantity }}</span></p>
 
             <form wire:submit.prevent="saveStockAdjustment">
-                <div class="space-y-4">
+                <div class="space-y-4 bg-transparent mt-4">
                     <div>
                         <label class="block">Adjustment Type</label>
-                        <select wire:model="adjustmentType" class="w-full border-gray-300 shadow-sm">
+                        <select wire:model="adjustmentType" class="w-full   border-gray-300 shadow-sm">
                             <option value="add">Add to Stock</option>
                             <option value="remove">Remove from Stock</option>
                             <option value="set">Set New Quantity</option>
@@ -113,7 +112,7 @@
                     </div>
                     <div>
                         <label class="block">Quantity</label>
-                        <input type="number" wire:model="adjustmentQuantity" class="w-full border-gray-300 shadow-sm" min="0">
+                        <input type="number" wire:model="adjustmentQuantity" class="w-full   border-gray-300 shadow-sm" min="0">
                         @error('adjustmentQuantity') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                 </div>

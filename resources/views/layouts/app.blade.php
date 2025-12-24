@@ -1,20 +1,30 @@
 <!doctype html>
-<html lang="en" class="h-full w-full relative bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:50px_50px]">
+<html lang="en">
 
-<head>
-    <meta charset=" UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $title ?? 'DemoPOS'}}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delicious Handrawn">
-    <meta name="description" content="A simple Livewire POS system">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+<meta charset=" UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>{{ $title ?? 'DemoPOS'}}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code&display=swap" rel="stylesheet">
+
+<meta name="description" content="A simple Livewire POS system">
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class=" antialiased font-semibold text-2xl uppercase backdrop-blur">
+<body class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px]">
 
-    {{-- Use the component implementation for backward compatibility. --}}
-    <x-layouts.app :title="$title ?? null">
-        {{ $slot ?? null }}
-    </x-layouts.app>
-    <footer class="text-center p-4">
+    <x-header />
+    <div class="relative h-full w-full ">
+        <main class="min-h-[calc(100vh-160px)] md:pl-0 pl-20">
+            {{ $slot }}
+        </main>
+        <x-layouts.footer />
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

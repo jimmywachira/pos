@@ -21,11 +21,11 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/users', UserManagement::class)->name('users.management')->middleware('can:users.manage');
 
-Route::get('/inventory/products', Products::class)->name('inventory.products');
-Route::get('/inventory/batches', Batches::class)->name('inventory.batches');
-Route::get('/reports/sales', Sales::class)->name('reports.sales');
-Route::get('/customers', Management::class)->name('customers.management');
-Route::get('/shifts', ShiftManagement::class)->name('shifts.management');
+Route::get('/inventory/products', Products::class)->name('inventory.products')->middleware('auth');
+Route::get('/inventory/batches', Batches::class)->name('inventory.batches')->middleware('auth');
+Route::get('/reports/sales', Sales::class)->name('reports.sales')->middleware('auth');
+Route::get('/customers', Management::class)->name('customers.management')->middleware('auth');
+Route::get('/shifts', ShiftManagement::class)->name('shifts.management')->middleware('auth');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

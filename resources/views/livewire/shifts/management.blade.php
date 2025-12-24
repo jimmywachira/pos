@@ -10,10 +10,12 @@
             <span>shifts</span>
         </a>
 
+        @if(auth()->user()?->hasRole('admin'))
         <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
             <span>role</span>
         </a>
+        @endif
     </nav>
     @if(session()->has('success'))
     <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
@@ -45,7 +47,7 @@
             <p class="text-gray-500 mt-2">Start a new shift to begin making sales.</p>
             <div class="mt-6">
                 <button wire:click="openClockInModal" class="bg-blue-600  px-6 py-3 rounded-lg hover:bg-blue-700 font-bold text-lg">
-                    Start Shift / Clock In
+                    Start Shift | Clock In
                 </button>
             </div>
         </div>
@@ -54,8 +56,8 @@
 
     <!-- Clock In Modal -->
     @if($showClockInModal)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+    <div class="fixed bg-white inset-0 flex items-center justify-center z-50">
+        <div class="backdrop-blur-lg rounded-lg shadow-lg p-6 w-full max-w-md">
             <h3 class="text-xl font-bold mb-4">Start New Shift</h3>
             <form wire:submit.prevent="clockIn">
                 <div class="space-y-4">
@@ -71,7 +73,7 @@
                     </div>
                     <div>
                         <label for="startingCash" class="block">Starting Cash (Float)</label>
-                        <input type="number" step="0.01" wire:model="startingCash" id="startingCash" class="w-full border rounded p-2" placeholder="e.g., 5000.00">
+                        <input type="number" wire:model="startingCash" id="startingCash" class="w-full border rounded p-2" placeholder="e.g., 5000.00">
                         @error('startingCash') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                 </div>

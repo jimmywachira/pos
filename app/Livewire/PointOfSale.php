@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
+use App\Models\Category;
 use Livewire\WithPagination;
+use Livewire\Component;
 use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting, Shift};
 use Illuminate\Support\Facades\DB;
 use Safaricom\Mpesa\Mpesa;
@@ -26,6 +27,7 @@ class PointOfSale extends Component
     public $loyaltyPointsToRedeem = 0;
     public $loyaltyDiscount = 0;
     public ?Shift $activeShift = null;
+    public $selectedCategory = null;
 
 
     // State properties
@@ -55,13 +57,16 @@ class PointOfSale extends Component
     public function getProductsProperty()
     {
         $query = ProductVariant::with('product')
+            ->when($this->selectedCategory, function ($q) {
+                $q->whereHas('product', fn ($p) => $p->where('category_id', $this->selectedCategory));
+            })
             ->when($this->search, function ($q) {
                 $q->where('label', 'like', "%{$this->search}%")
                     ->orWhere('barcode', 'like', "%{$this->search}%")
                     ->orWhereHas('product', fn($p) => $p->where('name', 'like', "%{$this->search}%"));
             });
 
-        return $query->paginate(10); // Paginate product grid
+        return $query->paginate(12); // Paginate product grid
     }
 
     public function getSubtotalProperty()
@@ -103,6 +108,12 @@ class PointOfSale extends Component
         // Ensure discount doesn't exceed subtotal
         $this->loyaltyDiscount = min($this->loyaltyDiscount, $this->subtotal);
         $this->loyaltyPointsToRedeem = $pointsToRedeem;
+    }
+
+    public function filterByCategory($categoryId)
+    {
+        $this->selectedCategory = $categoryId;
+        $this->resetPage(); // Reset pagination when category changes
     }
 
 
@@ -343,6 +354,7 @@ class PointOfSale extends Component
             'products' => $this->products,
             'heldSales' => Sale::where('status', 'pending')->latest()->take(5)->get(),
             'customers' => Customer::all(),
+            'categories' => Category::all(),
         ])->layout('layouts.app');
     }
 }

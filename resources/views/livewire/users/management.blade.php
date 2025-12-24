@@ -1,4 +1,4 @@
-<div class="p-6 bg-white/50 rounded-lg shadow">
+<div class="p-6 text-2xl rounded-lg shadow">
     <nav wire:navigate class="flex justify-evenly mb-6" x-data="{ open: false }">
         <a class="flex justify-evenly items-center font-bold text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
@@ -10,13 +10,15 @@
             <span>shifts</span>
         </a>
 
+        @if(auth()->user()?->hasRole('admin'))
         <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
             <span>role</span>
         </a>
+        @endif
     </nav>
 
-    <div class="p-6 bg-white/50 rounded-lg shadow">
+    <div class="p-6 /50 rounded-lg shadow">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">User Management</h2>
             <button wire:click="create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
@@ -28,12 +30,12 @@
 
         <!-- Search and Filters -->
         <div class="mb-4">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or email..." class="w-full border rounded p-2">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or email..." class="w-full border text-xl uppercase rounded p-2">
         </div>
 
         <!-- Users Table -->
-        <div class="bg-white shadow rounded-lg overflow-x-auto">
-            <table class="w-full">
+        <div class=" shadow rounded-lg overflow-x-auto">
+            <table class="w-full backdrop-blur-sm">
                 <thead>
                     <tr class="border-b bg-gray-50">
                         <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
@@ -49,7 +51,7 @@
                         <td class="p-3">{{ $user->email }}</td>
                         <td class="p-3">
                             @foreach($user->roles as $role)
-                            <span class="px-2 py-1 text-xs rounded-full bg-blue-200 text-blue-800">{{ $role->name }}</span>
+                            <span class="px-2 py-1 rounded-full bg-blue-200 text-blue-800">{{ $role->name }}</span>
                             @endforeach
                         </td>
                         <td class="p-3 flex gap-2">
@@ -72,19 +74,19 @@
 
         <!-- Create/Edit Modal -->
         @if($showModal)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+        <div class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
+            <div class="rounded-lg shadow-lg p-6 w-full max-w-lg">
                 <h3 class="text-xl font-bold mb-4">{{ $editingUserId ? 'Edit User' : 'Create User' }}</h3>
                 <form wire:submit.prevent="save">
                     <div class="space-y-4">
                         <div>
                             <label class="block">Name</label>
-                            <input type="text" wire:model="name" class="w-full border rounded p-2">
+                            <input type="text" wire:model="name" class="w-full border rounded text-xl uppercase p-2">
                             @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block">Email</label>
-                            <input type="email" wire:model="email" class="w-full border rounded p-2">
+                            <input type="email" wire:model="email" class="w-full border rounded text-xl uppercase p-2">
                             @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                         <div>
@@ -99,12 +101,12 @@
                         </div>
                         <div>
                             <label class="block">Password</label>
-                            <input type="password" wire:model="password" class="w-full border rounded p-2" placeholder="{{ $editingUserId ? 'Leave blank to keep current password' : '' }}">
+                            <input type="password" wire:model="password" class="w-full border text-xl uppercase rounded p-2" placeholder="{{ $editingUserId ? 'Leave blank to keep current password' : '' }}">
                             @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block">Confirm Password</label>
-                            <input type="password" wire:model="password_confirmation" class="w-full border rounded p-2">
+                            <input type="password" wire:model="password_confirmation" class="w-full border text-xl uppercase rounded p-2">
                         </div>
                     </div>
 
@@ -120,7 +122,7 @@
         <!-- Delete Confirmation Modal -->
         @if($showDeleteModal)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div class=" rounded-lg shadow-lg p-6 w-full max-w-md">
                 <h3 class="text-xl font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this user? This action cannot be undone.</p>
 

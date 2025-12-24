@@ -1,7 +1,7 @@
 <div class="p-6 ">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold">Customers</h2>
-        <button wire:click="create" class="border-2 uppercase border-blue-500 text-blue-500 px-4 py-2 hover:bg-blue-500 hover:text-white">Add Customer</button>
+        <h2 class=" font-bold">Customers</h2>
+        <button wire:click="create" class="border-2 border-blue-500 text-blue-500 px-4 py-2 hover:bg-blue-500 hover:text-white">Add Customer</button>
     </div>
 
     @if(session()->has('success'))
@@ -10,42 +10,61 @@
 
     <!-- Search and Filters -->
     <div class="mb-4 ">
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name, email, or phone..." class="w-full text-3xl uppercase border  p-2">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name, email, or phone..." class="w-full text-3xl border  p-2">
     </div>
 
     <!-- Customers Table -->
-    <div class=" shadow rounded-b-lg overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b shadow-lg bg-gray-400/50">
-                    <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
-                    <th class="p-3 text-left cursor-pointer" wire:click="sortBy('email')">Email</th>
-                    <th class="p-3 text-left">Phone</th>
-                    <th class="p-3 text-right">Total Spent</th>
-                    <th class="p-3 text-left">Last Purchase</th>
-                    <th class="p-3 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($customers as $customer)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3">{{ $customer->name }}</td>
-                    <td class="p-3">{{ $customer->email }}</td>
-                    <td class="p-3">{{ $customer->phone ?? 'N/A' }}</td>
-                    <td class="p-3 text-right">Ksh {{ number_format($customer->sales_sum_total ?? 0, 2) }}</td>
-                    <td class="p-3">{{ $customer->sales_max_created_at ? \Carbon\Carbon::parse($customer->sales_max_created_at)->diffForHumans() : 'N/A' }}</td>
-                    <td class="p-3 flex gap-2">
-                        <button wire:click="edit({{ $customer->id }})" class="text-blue-600 hover:underline">Edit</button>
-                        <button wire:click="confirmDelete({{ $customer->id }})" class="text-red-600 hover:underline">Delete</button>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="p-3 text-center">No customers found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="shadow rounded-b-lg overflow-hidden">
+        <div class="hidden md:block">
+            <table class="w-full">
+                <thead class="bg-gray-400/50">
+                    <tr>
+                        <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
+                        <th class="p-3 text-left cursor-pointer" wire:click="sortBy('email')">Email</th>
+                        <th class="p-3 text-left">Phone</th>
+                        <th class="p-3 text-right">Total Spent</th>
+                        <th class="p-3 text-left">Last Purchase</th>
+                        <th class="p-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($customers as $customer)
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">{{ $customer->name }}</td>
+                        <td class="p-3">{{ $customer->email }}</td>
+                        <td class="p-3">{{ $customer->phone ?? 'N/A' }}</td>
+                        <td class="p-3 text-right">Ksh {{ number_format($customer->sales_sum_total ?? 0, 2) }}</td>
+                        <td class="p-3">{{ $customer->sales_max_created_at ? \Carbon\Carbon::parse($customer->sales_max_created_at)->diffForHumans() : 'N/A' }}</td>
+                        <td class="p-3 flex gap-2">
+                            <button wire:click="edit({{ $customer->id }})" class="text-blue-600 hover:underline">Edit</button>
+                            <button wire:click="confirmDelete({{ $customer->id }})" class="text-red-600 hover:underline">Delete</button>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="p-3 text-center">No customers found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="grid grid-cols-1 gap-4 md:hidden">
+            @foreach($customers as $customer)
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="flex justify-between items-center">
+                    <div class="font-bold text-lg">{{ $customer->name }}</div>
+                    <div class="text-sm text-gray-600">Ksh {{ number_format($customer->sales_sum_total ?? 0, 2) }}</div>
+                </div>
+                <div class="text-sm text-gray-600">{{ $customer->email }}</div>
+                <div class="text-sm text-gray-600">{{ $customer->phone ?? 'N/A' }}</div>
+                <div class="text-xs text-gray-500 mt-2">Last purchase: {{ $customer->sales_max_created_at ? \Carbon\Carbon::parse($customer->sales_max_created_at)->diffForHumans() : 'N/A' }}</div>
+                <div class="flex gap-2 mt-3">
+                    <button wire:click="edit({{ $customer->id }})" class="text-blue-600 hover:underline text-sm">Edit</button>
+                    <button wire:click="confirmDelete({{ $customer->id }})" class="text-red-600 hover:underline text-sm">Delete</button>
+                </div>
+            </div>
+            @endforeach
+        </div>
     </div>
 
     <div class="mt-4">

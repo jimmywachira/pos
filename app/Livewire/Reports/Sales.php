@@ -22,10 +22,21 @@ class Sales extends Component
     public $sortBy = 'created_at';
     public $sortDirection = 'desc';
 
+    // Chart data
+    public array $salesTrendData = [];
+    public array $salesByBranchData = [];
+
     public function mount()
     {
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();
         $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['startDate', 'endDate', 'branchId', 'customerId', 'search'])) {
+            $this->resetPage();
+        }
     }
 
     public function sortBy($field)
@@ -38,9 +49,9 @@ class Sales extends Component
         $this->sortBy = $field;
     }
 
-    public function getSalesQueryProperty()
+    private function getBaseQuery()
     {
-        return Sale::with(['customer', 'branch', 'user', 'items.productVariant'])
+        return Sale::query()
             ->when($this->startDate, fn ($q) => $q->whereDate('sales.created_at', '>=', $this->startDate))
             ->when($this->endDate, fn ($q) => $q->whereDate('sales.created_at', '<=', $this->endDate))
             ->when($this->branchId !== 'all', fn ($q) => $q->where('branch_id', $this->branchId))
@@ -51,22 +62,19 @@ class Sales extends Component
     public function getAggregatesProperty()
     {
         // Clone the query to avoid affecting the main sales list pagination
-        $aggregatesQuery = clone $this->salesQuery;
+        $aggregatesQuery = $this->getBaseQuery();
 
         $totalSales = $aggregatesQuery->sum('total');
         $totalTax = $aggregatesQuery->sum('tax');
         $totalDiscount = $aggregatesQuery->sum('discount');
 
-        // Efficiently calculate total cost using a subquery and joins
-        $totalCost = (clone $this->salesQuery)
+        // To calculate profit, we need to sum the profit from each sale item.
+        // Profit per item = (unit_price - cost_price) * quantity
+        $totalProfit = (clone $this->getBaseQuery())
             ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
             ->join('product_variants', 'sale_items.product_variant_id', '=', 'product_variants.id')
-            ->sum(DB::raw('sale_items.quantity * product_variants.cost_price'));
+            ->sum(DB::raw('sale_items.quantity * (sale_items.unit_price - product_variants.cost_price)'));
 
-        // Profit is calculated as (Revenue - Cost of Goods Sold).
-        // Revenue = Total Sales - Tax + Discount (if discount is applied before tax)
-        $revenue = $totalSales - $totalTax;
-        $totalProfit = $revenue - $totalCost;
 
         return [
             'total_sales' => $totalSales,
@@ -76,9 +84,47 @@ class Sales extends Component
         ];
     }
 
+    private function prepareChartData()
+    {
+        $baseQuery = $this->getBaseQuery();
+
+        // Sales Trend Data
+        $trendData = (clone $baseQuery)
+            ->select(DB::raw('DATE(sales.created_at) as date'), DB::raw('SUM(total) as total_sales'))
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $this->salesTrendData = [
+            'labels' => $trendData->pluck('date')->map(fn ($date) => Carbon::parse($date)->format('d M'))->toArray(),
+            'values' => $trendData->pluck('total_sales')->toArray(),
+        ];
+
+        // Sales by Branch Data
+        $branchData = (clone $baseQuery)
+            ->join('branches', 'sales.branch_id', '=', 'branches.id')
+            ->select('branches.name', DB::raw('SUM(sales.total) as total_sales'))
+            ->groupBy('branches.name')
+            ->get();
+
+        $this->salesByBranchData = [
+            'labels' => $branchData->pluck('name')->toArray(),
+            'values' => $branchData->pluck('total_sales')->toArray(),
+        ];
+
+        // Dispatch event to update charts on the frontend
+        $this->dispatch('update-charts', [
+            'salesTrendData' => $this->salesTrendData,
+            'salesByBranchData' => $this->salesByBranchData,
+        ]);
+    }
+
     public function render()
     {
-        $sales = $this->salesQuery
+        $this->prepareChartData();
+
+        $sales = $this->getBaseQuery()
+            ->with(['customer', 'branch', 'user', 'items.productVariant'])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(15);
 

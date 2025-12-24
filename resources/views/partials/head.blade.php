@@ -1,15 +1,20 @@
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{{-- <!doctype html>
+<html lang="en">
 
-<title>{{ $title ?? config('app.name') }}</title>
+<meta charset=" UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>{{ $title ?? 'DemoPOS'}}</title>
 
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-{{-- <link rel="preconnect" href="https://fonts.bunny.net">
-<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" /> --}}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delicious Handrawn">
-
+<link href="https://fonts.googleapis.com/css2?family=Google Sans Code&display=swap" rel="stylesheet">
+<meta name="description" content="A simple Livewire POS system">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-@fluxAppearance
+</head>
+
+<body class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+
+    <div class="relative h-full w-full bg-white">
+        --}}

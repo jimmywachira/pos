@@ -1,12 +1,11 @@
-<div class="p-6">
-    <div class="flex justify-between items-center mb-4">
-
-        <nav class="container mx-auto p-4 space-x-4 flex justify-evenly items-center">
+<div class="p-4">
+    <div class=" mb-2">
+        <nav class="flex justify-evenly space-x-4  items-center mb-4 mx-auto p-4 ">
             <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
+                <ion-icon class=" text-2xl" name="server-outline"></ion-icon> <span>Products</span>
             </a>
             <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-3xl" name="list-outline"></ion-icon> <span>Stock</span>
+                <ion-icon class=" text-2xl" name="list-outline"></ion-icon> <span>Stock</span>
             </a>
         </nav>
     </div>
@@ -17,18 +16,18 @@
 
     <!-- Search and Filters -->
     <div class="flex  items-center space-x-2 mb-4">
-        <input type="text-xl" wire:model.live.debounce.300ms="search" placeholder="Search by name or SKU..." class="w-3/4 border-2 uppercase text-2xl border-gray-300 p-3">
+        <input type="" wire:model.live.debounce.300ms="search" placeholder="Search by name or SKU..." class="w-3/4 border-2 uppercase text-2xl border-gray-300 p-3">
         <button wire:click="create" class="w-1/4 px-4 py-2 border-2 border-blue-600 text-blue-600 uppercase text-2xl hover:text-blue-700 hover:border-blue-600">
-            <ion-icon class="text-xl font-bold" size="large" name="add-outline"></ion-icon>
+            <ion-icon class=" font-bold" size="large" name="add-outline"></ion-icon>
             <span class="ml-1">Add Product</span>
         </button>
     </div>
 
     <!-- Products Table -->
     <div class=" shadow rounded-lg overflow-x-auto">
-        <table class="w-full">
+        <table class="w-full backdrop-blur-sm  table-auto border-collapse">
             <thead>
-                <tr class="border-2">
+                <tr class="border-2 bg-black/10">
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('sku')">SKU</th>
                     <th class="p-3 text-left">Category</th>
@@ -62,15 +61,13 @@
         </table>
     </div>
 
-    <div class="mt-4">
-        {{ $products->links() }}
-    </div>
+
 
     <!-- Create/Edit Modal -->
     @if($showModal)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xl font-bold mb-4">{{ $editingProductId ? 'Edit Product' : 'Create Product' }}</h3>
+            <h3 class=" font-bold mb-4">{{ $editingProductId ? 'Edit Product' : 'Create Product' }}</h3>
             <form wire:submit.prevent="save">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -149,4 +146,7 @@
         </div>
     </div>
     @endif
+    <div class="mt-4">
+        {{ $products->links() }}
+    </div>
 </div>
