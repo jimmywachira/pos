@@ -47,13 +47,6 @@ class PointOfSale extends Component
         // If there's no active shift, the user shouldn't be able to make sales.
     }
 
-    // 🧠 Computed properties
-    public function updatedCustomerId($value)
-    {
-        $this->selectedCustomer = Customer::find($value);
-        $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
-    }
-
     public function getProductsProperty()
     {
         $query = ProductVariant::with('product')
@@ -68,6 +61,14 @@ class PointOfSale extends Component
 
         return $query->paginate(12); // Paginate product grid
     }
+
+    // 🧠 Computed properties
+    public function updatedCustomerId($value)
+    {
+        $this->selectedCustomer = Customer::find($value);
+        $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
+    }
+
 
     public function getSubtotalProperty()
     {

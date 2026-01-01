@@ -213,10 +213,10 @@
 
         {{-- Held Sales --}}
         @if($heldSales->count() > 0)
-        <div class=" absolute bottom-4 left-4 p-4 shadow-lg border border-gray-200 max-w-sm">
-                            <h3 class="mb-2 flex items-center gap-2">
-                                <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
-                            </h3>
+        <div class="absolute bottom-4 left-4 p-4 shadow-lg border border-gray-200 max-w-sm">
+                <h3 class="mb-2 flex items-center gap-2">
+                    <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
+                </h3>
                             <ul class=" space-y-2">
                                 @foreach($heldSales as $sale)
                                 <li class="flex justify-between items-center">
@@ -231,16 +231,16 @@
                     </div>
                     @endif
 
-                    {{-- Toast Notifications --}}
-                    {{-- <div x-data="{ msg: '', type: '', show: false, showToast(message, t = 'success') {
-        this.msg = message; this.type = t; this.show = true;
-        setTimeout(() => this.show = false, 3000);
-    }}" x-on:flash-message.window="showToast($event.detail.message, $event.detail.type)" x-show="show" x-transition class="fixed top-5 right-5 z-50 px-4 py-3
-                    shadow-lg text-white text-sm" :class="type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-600' : 'bg-yellow-500')">
-                    <span x-text="msg"></span>
-            </div> --}}
+    {{-- Toast Notifications --}}
+        {{-- <div x-data="{ msg: '', type: '', show: false, showToast(message, t = 'success') {
+            this.msg = message; this.type = t; this.show = true;
+            setTimeout(() => this.show = false, 3000);
+        }}" x-on:flash-message.window="showToast($event.detail.message, $event.detail.type)" x-show="show" x-transition class="fixed top-5 right-5 z-50 px-4 py-3
+            shadow-lg text-white text-sm" :class="type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-600' : 'bg-yellow-500')">
+        <span x-text="msg"></span>
+    </div> --}}
 
-            {{-- <div x-data="{
+    {{-- <div x-data="{
         flashMessage: '',
         flashType: '',
         showAlert: false,

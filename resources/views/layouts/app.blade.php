@@ -17,13 +17,14 @@
 <body class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px]">
 
     <x-header />
+
     <div class="relative h-full w-full ">
         <main class="min-h-[calc(100vh-160px)] md:pl-0 pl-20">
             {{ $slot }}
         </main>
-        <x-layouts.footer />
     </div>
 
+    <x-layouts.footer />
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
