@@ -14,18 +14,18 @@
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px]">
+<body class="w-full bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px]">
 
     <x-header />
 
-    <div class="relative h-full w-full ">
-        <main class="min-h-[calc(100vh-160px)] md:pl-0 pl-20">
+    <div class="relative w-full">
+        <main class="min-h-screen md:pl-0 pl-20">
             {{ $slot }}
         </main>
     </div>
 
     <x-layouts.footer />
-    
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>

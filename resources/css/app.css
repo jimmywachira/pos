@@ -6,7 +6,6 @@
     body {
         @apply text-black;
         @apply antialiased;
-
         font-family: "Google Sans Code", monospace;
         font-weight: 600;
         font-style: semibold;

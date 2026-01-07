@@ -1,11 +1,11 @@
-<div class="p-4  text-xl ">
+<div class="text-xl ">
     <div class="mb-4">
         <nav class="flex justify-evenly space-x-4  items-center mb-4 mx-auto p-4 ">
             <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
             </a>
             <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-3xl" name="list-outline"></ion-icon> <span>Stock</span>
+                <ion-icon class=" text-3xl" name="list-outline"><span>Stock</span></ion-icon>
             </a>
         </nav>
     </div>
@@ -42,7 +42,7 @@
     <div class=" shadow overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="border-b-2 p-3 ">
+                <tr class="border-b-2 p-3 bg-gray-100">
                     <th class="p-3  text-left">Product</th>
                     <th class="p-3 text-left">Branch</th>
                     <th class="p-3 text-right cursor-pointer" wire:click="sortBy('quantity')">Quantity</th>

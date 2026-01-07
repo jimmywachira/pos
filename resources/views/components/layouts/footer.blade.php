@@ -91,7 +91,7 @@
                     <ion-icon size="large" name="logo-github" class="h-6 w-6"></ion-icon>
                 </a>
             </div>
-            <p class="mt-4 text-xl text-center  md:mt-0 md:order-1"> {{ date('Y') }} &copy; DemoPOS, Inc. All rights reserved.</p>
+            <p class="mt-4 text-xl md:mt-0 md:order-1"> {{ date('Y') }} &copy; DemoPOS, Inc. All rights reserved.</p>
         </div>
     </div>
 </footer>
