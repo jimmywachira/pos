@@ -257,7 +257,7 @@ class PointOfSale extends Component
 
     public function initiateMpesaPayment()
     {
-        $this->validate(['mpesaPhone' => 'required|numeric|digits:12']);
+        $this->validate(['mpesaPhone' => 'required|numeric|digits:10']);
 
         $invoiceNo = 'INV-' . now()->format('YmdHis');
 
