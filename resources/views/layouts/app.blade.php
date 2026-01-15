@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? config('app.name', 'DemoPOS') }}</title>
-    <meta name="description" content="A simple Livewire POS system">
+    <meta name="description" content="POS system">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
