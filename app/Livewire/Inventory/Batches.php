@@ -33,7 +33,6 @@ class Batches extends Component
 
     public $showTransferModal = false;
     public $transferStockId;
-    public $transferStock;
     public $transferStockVariantName;
     public $transferAvailableQuantity;
     public $transferBranchId;
@@ -48,8 +47,6 @@ class Batches extends Component
         'adjustmentType' => 'required|in:add,set,remove',
         'adjustmentQuantity' => 'required|integer|min:0',
         'adjustmentReason' => 'nullable|string|max:255',
-        'transferBranchId' => 'required|integer',
-        'transferQuantity' => 'required|integer|min:1',
     ];
   
     public function sortBy($field)
@@ -223,9 +220,6 @@ class Batches extends Component
         $this->transferStockVariantName = $stock->productVariant->product->name . ' - ' . $stock->productVariant->label;
         $this->transferAvailableQuantity = $stock->quantity;
         $this->showTransferModal = true;
-        
-        $this->transferStock = $stock;
-        
     }
 
     public function transferStock()

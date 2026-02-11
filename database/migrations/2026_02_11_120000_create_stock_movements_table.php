@@ -23,7 +23,6 @@ return new class extends Migration
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();
-
             $table->index(['branch_id', 'product_variant_id']);
             $table->index(['reference_type', 'reference_id']);
         });
