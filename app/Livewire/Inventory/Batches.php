@@ -33,6 +33,7 @@ class Batches extends Component
 
     public $showTransferModal = false;
     public $transferStockId;
+    public $transferStock;
     public $transferStockVariantName;
     public $transferAvailableQuantity;
     public $transferBranchId;
@@ -47,8 +48,10 @@ class Batches extends Component
         'adjustmentType' => 'required|in:add,set,remove',
         'adjustmentQuantity' => 'required|integer|min:0',
         'adjustmentReason' => 'nullable|string|max:255',
+        'transferBranchId' => 'required|integer',
+        'transferQuantity' => 'required|integer|min:1',
     ];
-
+  
     public function sortBy($field)
     {
         if ($this->sortBy === $field) {
@@ -189,9 +192,22 @@ class Batches extends Component
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(15);
 
+        // Get all branches excluding the currently selected stock's branch
+        $excludeBranchId = null;
+        if ($this->transferStockId) {
+            $transferStock = Stock::find($this->transferStockId);
+            if ($transferStock) {
+                $excludeBranchId = $transferStock->branch_id;
+            }
+        }
+        
+        $branches = $excludeBranchId 
+            ? Branch::where('id', '!=', $excludeBranchId)->get()
+            : Branch::all();
+
         return view('livewire.inventory.batches', [
             'stocks' => $stocks,
-            'branches' => Branch::all(),
+            'branches' => $branches,
         ]);
     }
 
@@ -207,10 +223,19 @@ class Batches extends Component
         $this->transferStockVariantName = $stock->productVariant->product->name . ' - ' . $stock->productVariant->label;
         $this->transferAvailableQuantity = $stock->quantity;
         $this->showTransferModal = true;
+        
+        $this->transferStock = $stock;
+        
     }
 
     public function transferStock()
     {
+        // Validate only transfer-related fields
+        $this->validate([
+            'transferBranchId' => 'required|integer',
+            'transferQuantity' => 'required|integer|min:1',
+        ]);
+
         $stock = Stock::with('productVariant.product', 'branch')->findOrFail($this->transferStockId);
         $destinationBranch = Branch::find($this->transferBranchId);
 
