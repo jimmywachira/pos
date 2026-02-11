@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MpesaPaymentSuccess;
 use App\Models\Sale;
 use App\Models\Stock;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class MpesaController extends Controller
                     ->where('product_variant_id', $item->product_variant_id)
                     ->decrement('quantity', $item->quantity);
             }
+
+            event(new MpesaPaymentSuccess($sale));
         } else {
             // Payment failed or was cancelled
             $sale->update(['status' => 'failed', 'meta' => array_merge($sale->meta, ['mpesa_callback' => $callbackData])]);

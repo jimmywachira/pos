@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->decimal('loyalty_points', 12, 2)->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -1,14 +1,5 @@
 <div class="p-4">
-    <div class=" mb-2">
-        <nav class="flex justify-evenly space-x-4  items-center mb-4 mx-auto p-4 ">
-            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-2xl" name="server-outline"></ion-icon> <span>Products</span>
-            </a>
-            <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-2xl" name="list-outline"></ion-icon> <span>Stock</span>
-            </a>
-        </nav>
-    </div>
+   
 
     @if(session()->has('success'))
     <div class="bg-green-100  p-3  mb-4">{{ session('success') }}</div>
@@ -28,6 +19,7 @@
         <table class="w-full backdrop-blur-sm  table-auto border-collapse">
             <thead>
                 <tr class="border-2 bg-black/10">
+                    <th class="p-3 text-left">Image</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('sku')">SKU</th>
                     <th class="p-3 text-left">Category</th>
@@ -39,6 +31,9 @@
             <tbody>
                 @forelse($products as $product)
                 <tr class="border-b ">
+                    <td class="p-3">
+                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://picsum.photos/seed/' . $product->id . '/200/200' }}" alt="{{ $product->name }}" class="h-12 w-12 rounded object-cover">
+                    </td>
                     <td class="p-3">{{ $product->name }}</td>
                     <td class="p-3">{{ $product->sku }}</td>
                     <td class="p-3">{{ $product->category?->name ?? 'N/A' }}</td>
@@ -54,18 +49,16 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="p-3 text-center text-gray-500">No products found.</td>
+                    <td colspan="7" class="p-3 text-center text-gray-500">No products found.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-
-
     <!-- Create/Edit Modal -->
     @if($showModal)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <h3 class=" font-bold mb-4">{{ $editingProductId ? 'Edit Product' : 'Create Product' }}</h3>
             <form wire:submit.prevent="save">
@@ -84,6 +77,16 @@
                         <label class="block">Description</label>
                         <textarea wire:model="description" class="w-full border rounded p-2"></textarea>
                         @error('description') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block">Image</label>
+                        <input type="file" wire:model="image" accept="image/*" class="w-full border rounded p-2">
+                        @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        @if($currentImagePath)
+                        <div class="mt-2">
+                            <img src="{{ asset('storage/' . $currentImagePath) }}" alt="Current product image" class="h-20 w-20 rounded object-cover">
+                        </div>
+                        @endif
                     </div>
                     <div>
                         <label class="block">Category</label>
@@ -109,7 +112,7 @@
                 <h4 class="font-bold mb-2">Variants</h4>
                 <div class="space-y-4">
                     @foreach($variants as $index => $variant)
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-2 p-3 border rounded" wire:key="variant-{{ $index }}">
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-2 p-3 border rounded" wire:key="variant-{{ $index }}">
                         <div class="md:col-span-2">
                             <label class="block text-sm">Label (e.g., 500ml, Large)</label>
                             <input type="text" wire:model="variants.{{ $index }}.label" class="w-full border rounded p-2">
@@ -125,10 +128,15 @@
                             <input type="number" step="0.01" wire:model="variants.{{ $index }}.cost_price" class="w-full border rounded p-2">
                             @error('variants.'.$index.'.cost_price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
+                        <div>
+                            <label class="block text-sm">Initial Stock</label>
+                            <input type="number" min="0" wire:model="variants.{{ $index }}.initial_stock" class="w-full border rounded p-2">
+                            @error('variants.'.$index.'.initial_stock') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
                         <div class="flex items-end">
                             <button type="button" wire:click="removeVariant({{ $index }})" class="text-red-500 hover:underline">Remove</button>
                         </div>
-                        <div class="md:col-span-5">
+                        <div class="md:col-span-6">
                             <label class="block text-sm">Barcode (Optional)</label>
                             <input type="text" wire:model="variants.{{ $index }}.barcode" class="w-full border rounded p-2">
                             @error('variants.'.$index.'.barcode') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror

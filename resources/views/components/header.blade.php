@@ -7,9 +7,14 @@
                         <ion-icon size="large" name="grid-outline" class="text-xl"></ion-icon> DemoPOS
                     </a>
 
-                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('inventory.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
-                        <ion-icon size="large" name="server-outline" class="text-xl"></ion-icon> Inventory
+                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="px-3 py-2 rounded-md {{ request()->routeIs('inventory.products') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                        <ion-icon size="large" name="server-outline" class="text-xl"></ion-icon> Products
                     </a>
+
+                    <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="px-3 py-2 rounded-md {{ request()->routeIs('inventory.batches') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}" >
+                        <ion-icon class=" text-xl" size="large" name="list-outline"></ion-icon>Stock
+                    </a>
+
                     <a wire:navigate.hover href="{{ route('customers.management') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('customers.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
                         <ion-icon size="large" name="people-outline" class="text-xl"></ion-icon> Customers
                     </a>
@@ -29,7 +34,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" title="Log out" class="text-blue-500 hover:text-red-600 focus:outline-none">
-                            <ion-icon size="large" name="close-outline" class="text-xl"></ion-icon>
+                            <ion-icon size="large" name="arrow-redo-outline" class="text-xl"></ion-icon>
                         </button>
                     </form>
                 </div>

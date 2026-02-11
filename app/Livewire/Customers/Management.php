@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Customers;
 
+use App\Livewire\WithToast;
 use App\Models\Customer;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('layouts.app')]
 class Management extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToast;
 
     // Table properties
     public $search = '';
@@ -75,9 +78,8 @@ class Management extends Component
                 'address' => $this->address,
             ]
         );
-
-        session()->flash('success', $this->editingCustomerId ? 'Customer updated successfully.' : 'Customer created successfully.');
         $this->closeModal();
+        $this->showSuccessToast($this->editingCustomerId ? 'Customer updated successfully.' : 'Customer created successfully.');
     }
 
     public function confirmDelete($customerId)
@@ -88,9 +90,10 @@ class Management extends Component
 
     public function delete()
     {
+        #dd($this->deletingCustomerId);
         Customer::find($this->deletingCustomerId)->delete();
         $this->showDeleteModal = false;
-        session()->flash('success', 'Customer deleted successfully.');
+        $this->showSuccessToast('Customer deleted successfully.');
     }
 
     public function render()
@@ -105,13 +108,14 @@ class Management extends Component
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
 
-        return view('livewire.customers.management', ['customers' => $customers])->layout('layouts.app');
+        return view('livewire.customers.management', ['customers' => $customers]);
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetForm();
+        
     }
 
     private function resetForm()

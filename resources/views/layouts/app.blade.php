@@ -17,12 +17,6 @@
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        body {
-            font-family: 'Google Sans Code', monospace;
-        }
-
-    </style>
 </head>
 
 <body class="w-full min-h-screen flex flex-col bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] text-gray-900 antialiased">
@@ -43,5 +37,25 @@
     <!-- Icons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    {{-- <script>
+        document.addEventListener('livewire:init', function () {
+            //alert('Livewire component loaded');
+            Livewire.on('showSuccessToast', e => {
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg';
+                toast.textContent = e.message;
+                // Append to body
+                document.body.appendChild(toast);
+
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+                 
+            });
+        }); --}}
+    </script>    
 </body>
 </html>

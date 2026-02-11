@@ -11,10 +11,10 @@
         </a>
 
         @if(auth()->user()?->hasRole('admin'))
-        <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-            <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
-            <span>role</span>
-        </a>
+            <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
+                <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
+                <span>role</span>
+            </a>
         @endif
     </nav>
 

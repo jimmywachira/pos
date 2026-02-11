@@ -7,7 +7,9 @@ use App\Models\Shift;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
 class Management extends Component
 {
     public ?Shift $currentShift;
@@ -89,6 +91,6 @@ class Management extends Component
     {
         return view('livewire.shifts.management', [
             'branches' => Branch::all(),
-        ])->layout('layouts.app');
+        ]);
     }
 }

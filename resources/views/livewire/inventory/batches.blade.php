@@ -1,14 +1,5 @@
 <div class="text-xl ">
-    <div class="mb-4">
-        <nav class="flex justify-evenly space-x-4  items-center mb-4 mx-auto p-4 ">
-            <a wire:navigate.hover href="{{ route('inventory.products') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.products') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-3xl" name="server-outline"></ion-icon> <span>Products</span>
-            </a>
-            <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('inventory.batches') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
-                <ion-icon class=" text-3xl" name="list-outline"></ion-icon> <span>Stock</span>
-            </a>
-        </nav>
-    </div>
+    
     @if(session()->has('success'))
     <div class="bg-green-100 text-green-800 p-3 mb-4">{{ session('success') }}</div>
     @endif
@@ -76,7 +67,18 @@
                         @endif
                     </td>
                     <td class="p-3">
-                        <button wire:click="editStock({{ $stock->id }})" class="text-blue-600 hover:underline">Adjust Stock</button>
+                        <div class="flex items-center gap-2">
+                            <button wire:click="editStock({{ $stock->id }})" class="text-blue-600 hover:underline">Adjust Stock</button>
+                            <button wire:click="openTransferModal({{ $stock->id }})" class="text-indigo-600 hover:underline">Transfer</button>
+                            @if($isExpired)
+                            <button
+                                x-on:click.prevent="if (confirm('Remove expired items and log as loss?')) { $wire.writeOffExpired({{ $stock->id }}) }"
+                                class="text-red-600 hover:underline"
+                            >
+                                Remove Expired
+                            </button>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -94,7 +96,7 @@
 
     <!-- Stock Adjustment Modal -->
     @if($showStockModal)
-    <div class="fixed inset-0  bg-opacity-500 flex items-center justify-center z-50">
+    <div class="fixed inset-0 bg-gray-50/20 backdrop-blur-lg flex items-center justify-center z-50">
         <div class=" shadow-lg p-6 w-full max-w-lg">
             <h3 class="text-xl font-bold ">Adjust Stock</h3>
             <p class="text-gray-600 ">Product: <span class="font-semibold">{{ $editingStockVariantName }}</span></p>
@@ -120,6 +122,42 @@
                 <div class="flex justify-end gap-4 mt-6">
                     <button type="button" wire:click="closeModal" class="bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400">Cancel</button>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700">Save Adjustment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    <!-- Stock Transfer Modal -->
+    @if($showTransferModal)
+    <div class="fixed inset-0 bg-gray-50/20 backdrop-blur-lg flex items-center justify-center z-50">
+        <div class="shadow-lg p-6 w-full max-w-lg">
+            <h3 class="text-xl font-bold">Transfer Stock</h3>
+            <p class="text-gray-600">Product: <span class="font-semibold">{{ $transferStockVariantName }}</span></p>
+            <p class="text-gray-600">Available: <span class="font-semibold">{{ $transferAvailableQuantity }}</span></p>
+
+            <form wire:submit.prevent="transferStock">
+                <div class="space-y-4 bg-transparent mt-4">
+                    <div>
+                        <label class="block">Destination Branch</label>
+                        <select wire:model="transferBranchId" class="w-full border-gray-300 shadow-sm">
+                            <option value="">Select branch</option>
+                            @foreach($branches as $branch)
+                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('transferBranchId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block">Quantity</label>
+                        <input type="number" wire:model="transferQuantity" class="w-full border-gray-300 shadow-sm" min="1">
+                        @error('transferQuantity') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 mt-6">
+                    <button type="button" wire:click="closeTransferModal" class="bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700">Transfer</button>
                 </div>
             </form>
         </div>

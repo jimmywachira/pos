@@ -44,8 +44,8 @@
                 @forelse($products as $product)
                 <div wire:click="addToCart({{ $product->id }})" class="rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden" x-data="{ added: false }" @click="added = true; setTimeout(() => added = false, 800)">
                     <div class="relative">
-                        <div class="w-full h-32 bg-gray-100 flex items-center justify-center">
-                            <ion-icon class="text-5xl text-gray-300" name="cube-outline"></ion-icon>
+                        <div class="w-full h-32 bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                            <img class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 hover:scale-105" src="{{ $product->product->image_url ?: 'https://picsum.photos/seed/' . $product->id . '/900/700' }}" alt="{{ $product->product->name }}">
                         </div>
                         <div x-show="added" x-transition class="absolute inset-0 bg-blue-500/60 flex items-center justify-center text-white text-lg font-semibold">
                             <ion-icon name="checkmark-outline" class="text-4xl"></ion-icon>
@@ -69,6 +69,26 @@
             <div class="mt-4">
                 {{ $products->links() }}
             </div>
+
+            {{-- Held Sales --}}
+            @if($heldSales->count() > 0)
+            <div class="mt-6 p-4 shadow-lg border border-gray-200">
+                <h3 class="mb-2 flex items-center gap-2">
+                    <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
+                </h3>
+                <ul class="space-y-2">
+                    @foreach($heldSales as $sale)
+                    <li class="flex justify-between items-center">
+                        <span>{{ $sale->invoice_no }} (Ksh {{ number_format($sale->total, 2) }})</span>
+                        <div class="space-x-1">
+                            <button wire:click="resumeSale({{ $sale->id }})" class="px-2 py-1 bg-blue-500 text-white hover:bg-blue-600 text-xs">Resume</button>
+                            <button wire:click="cancelSale({{ $sale->id }})" class="px-2 py-1 bg-red-500 text-white hover:bg-red-600 text-xs">Cancel</button>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
         </div>
 
         {{-- Cart Section (conditional) --}}
@@ -119,11 +139,31 @@
 
             <!-- Totals & Payment Section -->
             <div class="p-4 border-t border-gray-200 bg-white">
+                <div class="mb-4">
+                    <label for="customer_id" class="block text-sm font-semibold text-gray-700">Customer (for loyalty)</label>
+                    <select id="customer_id" wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2">
+                        <option value="">Walk-in customer (no points)</option>
+                        @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="space-y-2 mb-4">
                     @if ($selectedCustomer)
                     <div class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg">
                         <p class="font-bold text-base">{{ $selectedCustomer->name }}</p>
                         <p class="text-sm">Available Points: <span class="font-bold">{{ number_format($selectedCustomer->loyalty_points, 0) }}</span></p>
+                        <div class="mt-2 flex items-center justify-between gap-3 text-sm">
+                            <span>Award loyalty points</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model.live="awardLoyaltyPoints" class="sr-only peer">
+                                <div class="w-10 h-5 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                            </label>
+                            <span class="text-xs text-gray-500">
+                                {{ $awardLoyaltyPoints ? 'On' : 'Off' }}
+                            </span>
+                        </div>
                         <div class="flex items-center mt-2 gap-2">
                             <input type="number" wire:model.live="loyaltyPointsToRedeem" placeholder="Points to use" class="w-full border-gray-300 rounded-md shadow-sm text-sm p-2">
                             <button wire:click="applyLoyaltyPoints" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-semibold">Apply</button>
@@ -199,11 +239,11 @@
                     <div wire:loading wire:target="finalizeSale" class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                     @if($isProcessingMpesa)
                     <div class="animate-pulse flex items-center gap-2 justify-center">
-                        <ion-icon name="time-outline" class="></ion-icon>
+                        <ion-icon name="time-outline" class=""></ion-icon>
                         <span>Processing M-Pesa...</span>
                     </div>
                     @else
-                    <ion-icon name=" checkmark-done-outline" class="></ion-icon>
+                    <ion-icon name="checkmark-done-outline" class="p-2"></ion-icon>
                     <span>Complete Sale</span>
                     @endif
                 </button>
@@ -211,47 +251,13 @@
         </div>
         @endif
 
-        {{-- Held Sales --}}
-        @if($heldSales->count() > 0)
-        <div class="absolute bottom-4 left-4 p-4 shadow-lg border border-gray-200 max-w-sm">
-                <h3 class="mb-2 flex items-center gap-2">
-                    <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
-                </h3>
-                            <ul class=" space-y-2">
-                                @foreach($heldSales as $sale)
-                                <li class="flex justify-between items-center">
-                                    <span>{{ $sale->invoice_no }} (Ksh {{ number_format($sale->total, 2) }})</span>
-                                    <div class="space-x-1">
-                                        <button wire:click="resumeSale({{ $sale->id }})" class="px-2 py-1 bg-blue-500 text-white hover:bg-blue-600 text-xs">Resume</button>
-                                        <button wire:click="cancelSale({{ $sale->id }})" class="px-2 py-1 bg-red-500 text-white hover:bg-red-600 text-xs">Cancel</button>
-                                    </div>
-                                </li>
-                                @endforeach
-                            </ul>
-                    </div>
-                    @endif
-
-    {{-- Toast Notifications --}}
-        {{-- <div x-data="{ msg: '', type: '', show: false, showToast(message, t = 'success') {
+    {{--Toast Notifications --}}
+         <div x-data="{ msg: '', type: '', show: false, showToast(message, t = 'success') {
             this.msg = message; this.type = t; this.show = true;
             setTimeout(() => this.show = false, 3000);
         }}" x-on:flash-message.window="showToast($event.detail.message, $event.detail.type)" x-show="show" x-transition class="fixed top-5 right-5 z-50 px-4 py-3
             shadow-lg text-white text-sm" :class="type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-600' : 'bg-yellow-500')">
         <span x-text="msg"></span>
-    </div> --}}
-
-    {{-- <div x-data="{
-        flashMessage: '',
-        flashType: '',
-        showAlert: false,
-        show(message, type = 'success') {
-            this.flashMessage = message; this.flashType = type; this.showAlert = true;
-            setTimeout(() => this.showAlert = false, 3000);
-        }
-    }" x-on:flash-message.window="show($event.detail.message, $event.detail.type)" x-show="showAlert" x-transition class="absolute top-5 right-5 px-4 py-2 
-     text-white" :class="flashType === 'success' ? 'bg-blue-500' : 'bg-red-500'">
-        <span x-text="flashMessage"></span>
-    </div> --}}
-
+    </div>
         </div>
     </div>

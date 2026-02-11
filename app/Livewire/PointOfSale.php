@@ -5,11 +5,13 @@ namespace App\Livewire;
 use App\Models\Category;
 use Livewire\WithPagination;
 use Livewire\Component;
-use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting, Shift};
+use App\Models\{ProductVariant, Sale, SaleItem, Customer, Branch, User, Stock, Setting, Shift, StockMovement};
 use Illuminate\Support\Facades\DB;
 use Safaricom\Mpesa\Mpesa;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
 class PointOfSale extends Component
 {
     use WithPagination;
@@ -26,6 +28,7 @@ class PointOfSale extends Component
     public ?Customer $selectedCustomer = null;
     public $loyaltyPointsToRedeem = 0;
     public $loyaltyDiscount = 0;
+    public $awardLoyaltyPoints = false;
     public ?Shift $activeShift = null;
     public $selectedCategory = null;
 
@@ -67,6 +70,7 @@ class PointOfSale extends Component
     {
         $this->selectedCustomer = Customer::find($value);
         $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
+        $this->awardLoyaltyPoints = false;
     }
 
 
@@ -186,6 +190,7 @@ class PointOfSale extends Component
         $this->amountPaid = 0;
         $this->loyaltyPointsToRedeem = 0;
         $this->loyaltyDiscount = 0;
+        $this->awardLoyaltyPoints = false;
         $this->resumingSaleId = null;
     }
 
@@ -197,6 +202,16 @@ class PointOfSale extends Component
             return;
         }
 
+        if ($this->resumingSaleId) {
+            $resumedSale = Sale::where('status', 'pending')->find($this->resumingSaleId);
+
+            if (! $resumedSale) {
+                $this->dispatch('flash-message', message: 'Held sale not found or already completed.', type: 'error');
+                $this->clearCart();
+                return;
+            }
+        }
+
         if ($this->paymentMethod === 'mpesa') {
             $this->initiateMpesaPayment();
         } else { // Cash payment
@@ -206,19 +221,45 @@ class PointOfSale extends Component
             }
 
             $sale = DB::transaction(function () {
-                $sale = Sale::create([
-                    'invoice_no' => 'INV-' . now()->format('YmdHis'),
-                    'branch_id' => $this->branchId,
-                    'user_id' => Auth::id(),
-                    'customer_id' => $this->customerId,
-                    'total' => $this->grandTotal,
-                    'tax' => $this->tax,
-                    'discount' => $this->discount,
-                    'meta' => ['loyalty_discount' => $this->loyaltyDiscount, 'points_redeemed' => $this->loyaltyPointsToRedeem],
-                    'paid' => floatval($this->amountPaid),
-                    'payment_method' => 'cash',
-                    'status' => 'completed',
-                ]);
+                if ($this->resumingSaleId) {
+                    $sale = Sale::where('status', 'pending')->findOrFail($this->resumingSaleId);
+                    $sale->update([
+                        'branch_id' => $this->branchId,
+                        'user_id' => Auth::id(),
+                        'customer_id' => $this->customerId,
+                        'total' => $this->grandTotal,
+                        'tax' => $this->tax,
+                        'discount' => $this->discount,
+                        'meta' => [
+                            'loyalty_discount' => $this->loyaltyDiscount,
+                            'points_redeemed' => $this->loyaltyPointsToRedeem,
+                            'award_loyalty_points' => (bool) $this->awardLoyaltyPoints,
+                        ],
+                        'paid' => floatval($this->amountPaid),
+                        'payment_method' => 'cash',
+                        'status' => 'completed',
+                    ]);
+
+                    $sale->items()->delete();
+                } else {
+                    $sale = Sale::create([
+                        'invoice_no' => 'INV-' . now()->format('YmdHis'),
+                        'branch_id' => $this->branchId,
+                        'user_id' => Auth::id(),
+                        'customer_id' => $this->customerId,
+                        'total' => $this->grandTotal,
+                        'tax' => $this->tax,
+                        'discount' => $this->discount,
+                        'meta' => [
+                            'loyalty_discount' => $this->loyaltyDiscount,
+                            'points_redeemed' => $this->loyaltyPointsToRedeem,
+                            'award_loyalty_points' => (bool) $this->awardLoyaltyPoints,
+                        ],
+                        'paid' => floatval($this->amountPaid),
+                        'payment_method' => 'cash',
+                        'status' => 'completed',
+                    ]);
+                }
 
                 foreach ($this->cart as $item) {
                     $sale->items()->create([
@@ -231,6 +272,18 @@ class PointOfSale extends Component
                     Stock::where('branch_id', $this->branchId)
                         ->where('product_variant_id', $item['id'])
                         ->decrement('quantity', $item['quantity']);
+
+                    StockMovement::create([
+                        'product_variant_id' => $item['id'],
+                        'branch_id' => $this->branchId,
+                        'user_id' => Auth::id(),
+                        'transaction_type' => 'sale',
+                        'direction' => 'out',
+                        'quantity' => $item['quantity'],
+                        'reference_type' => 'sale',
+                        'reference_id' => $sale->id,
+                        'notes' => 'Sale ' . $sale->invoice_no,
+                    ]);
                 }
 
             // Handle loyalty points
@@ -241,10 +294,12 @@ class PointOfSale extends Component
                 }
 
                 // 2. Award new points
-                $earnRate = Setting::get('loyalty_earn_rate', 100);
-                if ($earnRate > 0) {
-                    $pointsEarned = floor($this->subtotal / $earnRate);
-                    $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
+                if ($this->awardLoyaltyPoints) {
+                    $earnRate = Setting::get('loyalty_earn_rate', 100);
+                    if ($earnRate > 0) {
+                        $pointsEarned = floor($this->subtotal / $earnRate);
+                        $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
+                    }
                 }
             }
                 return $sale;
@@ -255,38 +310,38 @@ class PointOfSale extends Component
         }
     }
 
-    public function initiateMpesaPayment()
-    {
-        $this->validate(['mpesaPhone' => 'required|numeric|digits:10']);
+    // public function initiateMpesaPayment()
+    // {
+    //     $this->validate(['mpesaPhone' => 'required|numeric|digits:10']);
 
-        $invoiceNo = 'INV-' . now()->format('YmdHis');
+    //     $invoiceNo = 'INV-' . now()->format('YmdHis');
 
-        // Create a pending sale record first
-        $sale = Sale::create([
-            'invoice_no' => $invoiceNo,
-            'branch_id' => $this->branchId,
-            'user_id' => Auth::id(),
-            'customer_id' => $this->customerId,
-            'total' => $this->grandTotal,
-            'tax' => $this->tax,
-            'discount' => $this->discount,
-            'paid' => $this->grandTotal,
-            'payment_method' => 'mpesa',
-            'status' => 'pending_payment',
-        ]);
+    //     // Create a pending sale record first
+    //     $sale = Sale::create([
+    //         'invoice_no' => $invoiceNo,
+    //         'branch_id' => $this->branchId,
+    //         'user_id' => Auth::id(),
+    //         'customer_id' => $this->customerId,
+    //         'total' => $this->grandTotal,
+    //         'tax' => $this->tax,
+    //         'discount' => $this->discount,
+    //         'paid' => $this->grandTotal,
+    //         'payment_method' => 'mpesa',
+    //         'status' => 'pending_payment',
+    //     ]);
 
-        foreach ($this->cart as $item) {
-            $sale->items()->create([
-                'product_variant_id' => $item['id'],
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'line_total' => $item['unit_price'] * $item['quantity'],
-            ]);
-        }
+    //     foreach ($this->cart as $item) {
+    //         $sale->items()->create([
+    //             'product_variant_id' => $item['id'],
+    //             'quantity' => $item['quantity'],
+    //             'unit_price' => $item['unit_price'],
+    //             'line_total' => $item['unit_price'] * $item['quantity'],
+    //         ]);
+    //     }
 
-        $mpesa = new Mpesa();
-        $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
-        $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
+    //     $mpesa = new Mpesa();
+    //     $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
+    //     $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
         
         // $amount = (int) ceil($this->grandTotal);
         // $businessShortCode = config('mpesa.shortcode');
@@ -314,22 +369,54 @@ class PointOfSale extends Component
         //     'merchant_request_id' => $stkPush['MerchantRequestID'] ?? null
         // ]]);
 
-        $this->isProcessingMpesa = true;
-        $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
-    }
+    //     $this->isProcessingMpesa = true;
+    //     $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
+    // }
 
     // 💾 Hold Sale
     public function holdSale()
     {
-        session()->flash('message', 'Sale held temporarily!');
+        if (empty($this->cart)) {
+            $this->dispatch('flash-message', message: 'Cart is empty!', type: 'warning');
+            return;
+        }
+
+        $sale = Sale::create([
+            'invoice_no' => 'HOLD-' . now()->format('YmdHis'),
+            'branch_id' => $this->branchId,
+            'user_id' => Auth::id(),
+            'customer_id' => $this->customerId,
+            'total' => $this->grandTotal,
+            'tax' => $this->tax,
+            'discount' => $this->discount,
+            'meta' => ['loyalty_discount' => $this->loyaltyDiscount, 'points_redeemed' => $this->loyaltyPointsToRedeem],
+            'paid' => 0,
+            'payment_method' => 'hold',
+            'status' => 'pending',
+        ]);
+
+        foreach ($this->cart as $item) {
+            $sale->items()->create([
+                'product_variant_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'line_total' => $item['unit_price'] * $item['quantity'],
+            ]);
+        }
+
+        $this->dispatch('flash-message', message: 'Sale held temporarily!', type: 'success');
         $this->clearCart();
     }
 
     // ↩️ Resume Sale
     public function resumeSale($saleId)
     {
-        $sale = Sale::with('items.productVariant.product')->findOrFail($saleId);
+        $sale = Sale::with('items.productVariant.product')
+            ->where('status', 'pending')
+            ->findOrFail($saleId);
         $this->resumingSaleId = $saleId;
+        $this->customerId = $sale->customer_id;
+        $this->selectedCustomer = $sale->customer;
 
         $this->cart = $sale->items->mapWithKeys(fn($item) => [
             $item->product_variant_id => [
@@ -348,6 +435,33 @@ class PointOfSale extends Component
         session()->flash('message', 'Held sale cancelled!');
     }
 
+    public function getListeners()
+    {
+        $userId = Auth::id();
+
+        if (! $userId) {
+            return [];
+        }
+
+        return [
+            "echo-private:user.{$userId},MpesaPaymentSuccess" => 'handleMpesaPaymentSuccess',
+        ];
+    }
+
+    public function handleMpesaPaymentSuccess($payload = [])
+    {
+        if ($this->isProcessingMpesa) {
+            $this->clearCart();
+        }
+
+        $this->resetPage();
+        $this->dispatch(
+            'flash-message',
+            message: 'Payment confirmed. Stock updated.',
+            type: 'success'
+        );
+    }
+
     // 🎯 Render
     public function render()
     {
@@ -356,6 +470,6 @@ class PointOfSale extends Component
             'heldSales' => Sale::where('status', 'pending')->latest()->take(5)->get(),
             'customers' => Customer::all(),
             'categories' => Category::all(),
-        ])->layout('layouts.app');
+        ]);
     }
 }

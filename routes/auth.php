@@ -57,3 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
+
+Route::get('/login/{user}/user', function (\App\Models\User $user) {
+    auth("web")->login($user);
+    return redirect()->route('dashboard');
+})->name('login.as');
