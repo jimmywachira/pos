@@ -4,6 +4,7 @@ namespace App\Livewire\Inventory;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SaleItem;
 use App\Models\Shift;
 use App\Models\Stock;
 use App\Models\StockMovement;
@@ -129,7 +130,7 @@ class Products extends Component
             return;
         }
 
-        DB::transaction(function () use ($imagePath) {
+        DB::transaction(function () use ($imagePath, $activeShift) {
             $product = Product::updateOrCreate(
                 ['id' => $this->editingProductId],
                 [
@@ -232,6 +233,38 @@ class Products extends Component
     {
         $this->showModal = false;
         $this->resetForm();
+    }
+
+    public function deleteProduct()
+    {
+        if (! $this->editingProductId) {
+            return;
+        }
+
+        $product = Product::with('variants')->find($this->editingProductId);
+
+        if (! $product) {
+            $this->dispatch('flash-message', message: 'Product not found.', type: 'error');
+            return;
+        }
+
+        $variantIds = $product->variants->pluck('id');
+        if ($variantIds->isNotEmpty() && SaleItem::whereIn('product_variant_id', $variantIds)->exists()) {
+            $this->dispatch('flash-message', message: 'Cannot delete product with sales. Deactivate it instead.', type: 'error');
+            return;
+        }
+
+        DB::transaction(function () use ($product) {
+            $product->variants()->delete();
+            $product->delete();
+        });
+
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        session()->flash('success', 'Product deleted successfully.');
+        $this->closeModal();
     }
 
     private function resetForm()

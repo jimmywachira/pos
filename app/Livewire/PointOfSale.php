@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Safaricom\Mpesa\Mpesa;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use App\Services\Etims\EtimsClient;
+use Illuminate\Support\Facades\Log;
 
 #[Layout('layouts.app')]
 class PointOfSale extends Component
@@ -305,8 +307,41 @@ class PointOfSale extends Component
                 return $sale;
             });
 
+            $this->submitSaleToEtims($sale);
+
             $this->dispatch('print-receipt', saleId: $sale->id);
             $this->clearCart();
+        }
+    }
+
+    private function submitSaleToEtims(Sale $sale): void
+    {
+        if (! config('etims.enabled')) {
+            return;
+        }
+
+        try {
+            $result = app(EtimsClient::class)->submitSale($sale);
+
+            $sale->forceFill([
+                'etims_status' => $result['status'] ?? 'submitted',
+                'etims_receipt_no' => $result['receipt_no'] ?? null,
+                'etims_qr_code' => $result['qr_code'] ?? null,
+                'etims_response' => $result['raw'] ?? null,
+                'etims_submitted_at' => now(),
+            ])->save();
+        } catch (\Throwable $e) {
+            Log::warning('eTIMS submission failed', [
+                'sale_id' => $sale->id,
+                'invoice_no' => $sale->invoice_no,
+                'error' => $e->getMessage(),
+            ]);
+
+            $sale->forceFill([
+                'etims_status' => 'failed',
+                'etims_response' => ['error' => $e->getMessage()],
+                'etims_submitted_at' => now(),
+            ])->save();
         }
     }
 

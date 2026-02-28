@@ -1,10 +1,10 @@
 <div>
     <div class="flex h-[calc(100vh-80px)] relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
         @if(!$activeShift)
-        <div class="absolute inset-0 backdrop-blur-lg z-10 flex items-center justify-center">
+        <div class="absolute inset-0 bg-white/20 backdrop-blur-lg z-10 flex items-center justify-center">
             <div class="text-center p-8 shadow-lg border">
-                <ion-icon name="stop-circle-outline" class="text-5xl text-red-500 mx-auto"></ion-icon>
-                <h2 class="font-bold mt-4">No Active Shift</h2>
+                <ion-icon name="stop-circle-outline" class="text-5xl text-red-500 mx-auto"></ion-icon> 
+                <h2 class="font-semibold mt-4">No Active Shift</h2>
                 <p class="text-gray-600 mt-2">You must clock in to start a new sales session.</p>
                 <div class="mt-6">
                     <a href="{{ route('shifts.management') }}" wire:navigate class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Clock In</a>

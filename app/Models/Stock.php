@@ -11,6 +11,10 @@ class Stock extends Model
 
     protected $fillable = ['branch_id', 'product_variant_id', 'quantity', 'expiry_date'];
 
+    protected $casts = [
+    'expiry_date' => 'date', // or 'datetime'
+        ];
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

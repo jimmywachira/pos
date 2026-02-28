@@ -67,6 +67,23 @@
             </table>
         </div>
 
+        @if($sale->etims_status || $sale->etims_qr_src)
+        <div class="pt-2 border-t border-dashed border-black text-center">
+            <p class="font-semibold">eTIMS</p>
+            @if($sale->etims_receipt_no)
+            <p><strong>Receipt No:</strong> {{ $sale->etims_receipt_no }}</p>
+            @endif
+            @if($sale->etims_status)
+            <p><strong>Status:</strong> {{ ucfirst($sale->etims_status) }}</p>
+            @endif
+            @if($sale->etims_qr_src)
+            <div class="mt-2 flex justify-center">
+                <img src="{{ $sale->etims_qr_src }}" alt="eTIMS QR" class="h-28 w-28">
+            </div>
+            @endif
+        </div>
+        @endif
+
         <div class="text-center pt-2 border-t border-dashed border-black">
             <p class="font-semibold">{{ $settings['receipt_footer'] ?? 'Thank you for your purchase!' }}</p>
         </div>

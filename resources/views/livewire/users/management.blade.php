@@ -2,7 +2,7 @@
     <nav wire:navigate class="flex justify-evenly mb-6" x-data="{ open: false }">
         <a class="flex justify-evenly items-center font-bold text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
             <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
-            <span></span>
+            <span>settings</span>
         </a>
 
         <a wire:navigate.hover href="{{ route('shifts.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('shifts.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
@@ -10,12 +10,12 @@
             <span>shifts</span>
         </a>
 
-        @if(auth()->user()?->hasRole('admin'))
+        @unless(auth()->user()?->hasRole('admin'))
             <a wire:navigate.hover href="{{ route('users.management') }}" class="flex justify-evenly items-center font-bold hover:text-blue-600 transition-colors {{ request()->routeIs('users.*') ? 'text-blue-700' : '' }}" style="font-size: 1.1rem;">
                 <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
                 <span>role</span>
             </a>
-        @endif
+        @endunless  
     </nav>
 
     <div class="p-6 /50 rounded-lg shadow">

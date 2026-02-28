@@ -57,8 +57,7 @@ class Sales extends Component
         $this->sortBy = $field;
     }
 
-    private function getBaseQuery()
-    {
+    private function getBaseQuery(){
         return Sale::query()
             ->when($this->startDate, fn ($q) => $q->whereDate('sales.created_at', '>=', $this->startDate))
             ->when($this->endDate, fn ($q) => $q->whereDate('sales.created_at', '<=', $this->endDate))
@@ -67,8 +66,7 @@ class Sales extends Component
             ->when($this->search, fn ($q) => $q->where('invoice_no', 'like', '%' . $this->search . '%'));
     }
 
-    public function getAggregatesProperty()
-    {
+    public function getAggregatesProperty(){
         #Clone the query to avoid affecting the main sales list pagination
         $aggregatesQuery = $this->getBaseQuery();
 
@@ -94,17 +92,16 @@ class Sales extends Component
         return [
             'total_sales' => $totalSales,
             'total_tax' => $totalTax,
-            'total_discount' => $totalDiscount, // Kept for display purposes
+            'total_discount' => $totalDiscount, #Kept for display purposes
             'total_profit' => $totalProfit,
             'total_loss' => $totalLoss,
         ];
     }
 
-    private function prepareChartData()
-    {
+    private function prepareChartData(){
         $baseQuery = $this->getBaseQuery();
 
-        // Sales Trend Data
+        #Sales Trend Data
         $trendData = (clone $baseQuery)
             ->select(DB::raw('DATE(sales.created_at) as date'), DB::raw('SUM(total) as total_sales'))
             ->groupBy('date')
@@ -135,8 +132,7 @@ class Sales extends Component
         ]);
     }
 
-    public function render()
-    {
+    public function render(){
         $this->prepareChartData();
 
         $sales = $this->getBaseQuery()
@@ -162,7 +158,7 @@ class Sales extends Component
                 });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(15, ['*'], 'movementPage');
+            ->paginate(20, ['*'], 'movementPage');
 
         return view('livewire.reports.sales', [
             'sales' => $sales,

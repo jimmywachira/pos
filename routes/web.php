@@ -7,6 +7,7 @@ use App\Livewire\PointOfSale;
 use App\Livewire\Inventory\Products;
 use App\Livewire\Inventory\Batches;
 use App\Livewire\Reports\Sales;
+use App\Livewire\Reports\SalesReportPrint;
 use App\Livewire\Customers\Management;
 use App\Livewire\Settings\General;
 use App\Livewire\Users\Management as UserManagement;
@@ -14,6 +15,7 @@ use App\Livewire\Shifts\Management as ShiftManagement;
 
 Route::get('/', fn () => redirect()->route('login'));
 Route::get('receipt/{sale}', Receipt::class)->name('receipt.print');
+Route::get('reports/sales/print', SalesReportPrint::class)->name('reports.sales.print')->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/settings', General::class)->name('settings');

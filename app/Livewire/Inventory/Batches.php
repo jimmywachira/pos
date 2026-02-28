@@ -124,7 +124,7 @@ class Batches extends Component
     {
         $stock = Stock::with('productVariant')->findOrFail($stockId);
 
-        if (! $stock->expiry_date || Carbon::parse($stock->expiry_date)->isFuture()) {
+        if (! $stock->expiry_date || $stock->expiry_date->isFuture()) {
             $this->dispatch('flash-message', message: 'This stock batch is not expired.', type: 'error');
             return;
         }

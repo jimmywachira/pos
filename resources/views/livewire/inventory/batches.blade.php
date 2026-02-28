@@ -124,18 +124,7 @@
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700">Save Adjustment</button>
                 </div>
             </form>
-        </div>
-    </div>
-    @endif
-
-    <!-- Stock Transfer Modal -->
-    @if($showTransferModal)
-    <div class="fixed inset-0 bg-gray-50/20 backdrop-blur-lg flex items-center justify-center z-50">
-        <div class="shadow-lg p-6 w-full max-w-lg">
-            <h3 class="text-xl font-bold">Transfer Stock</h3>  
-            <p class="text-gray-600">Product: <span class="font-semibold">{{ $transferStockVariantName }}</span></p>
-            <p class="text-gray-600">Available: <span class="font-semibold">{{ $transferAvailableQuantity }}</span></p>
-
+  
             <form wire:submit.prevent="transferStock">
                 <div class="space-y-4 bg-transparent mt-4">
                     <div>

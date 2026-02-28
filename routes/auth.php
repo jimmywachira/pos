@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 });
 
-Route::get('/login/{user}/user', function (\App\Models\User $user) {
-    auth("web")->login($user);
-    return redirect()->route('dashboard');
-})->name('login.as');
+// Route::get('/login/{user}/user', function (\App\Models\User $user) {
+//     auth("web")->login($user);
+//     return redirect()->route('dashboard');
+// })->name('login.as');

@@ -1,14 +1,13 @@
 <div class="p-4">
    
-
     @if(session()->has('success'))
     <div class="bg-green-100  p-3  mb-4">{{ session('success') }}</div>
     @endif
 
     <!-- Search and Filters -->
     <div class="flex  items-center space-x-2 mb-4">
-        <input type="" wire:model.live.debounce.300ms="search" placeholder="Search by name or SKU..." class="w-3/4 border-2 uppercase text-2xl border-gray-300 p-3">
-        <button wire:click="create" class="w-1/4 px-4 py-2 border-2 border-blue-600 text-blue-600 uppercase text-2xl hover:text-blue-700 hover:border-blue-600">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or SKU ..." class="w-3/4 border-2 text-2xl border-gray-300 p-3">
+        <button wire:click="create" class="w-1/4 px-4 py-2 border-2 border-blue-600 text-blue-600 text-2xl hover:text-blue-700 hover:border-blue-600">
             <ion-icon class=" font-bold" size="large" name="add-outline"></ion-icon>
             <span class="ml-1">Add Product</span>
         </button>
@@ -18,7 +17,7 @@
     <div class=" shadow rounded-lg overflow-x-auto">
         <table class="w-full backdrop-blur-sm  table-auto border-collapse">
             <thead>
-                <tr class="border-2 bg-black/10">
+                <tr class="border-4 bg-black/10">
                     <th class="p-3 text-left">Image</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('name')">Name</th>
                     <th class="p-3 text-left cursor-pointer" wire:click="sortBy('sku')">SKU</th>
@@ -30,7 +29,7 @@
             </thead>
             <tbody>
                 @forelse($products as $product)
-                <tr class="border-b ">
+                <tr class="border-b hover:bg-gray-50" wire:dblClick="edit({{ $product->id }})" id="product-{{ $product->id }}-row">
                     <td class="p-3">
                         <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://picsum.photos/seed/' . $product->id . '/200/200' }}" alt="{{ $product->name }}" class="h-12 w-12 rounded object-cover">
                     </td>
@@ -147,6 +146,9 @@
                 <button type="button" wire:click="addVariant" class="mt-2 text-sm text-blue-600 hover:underline">+ Add Another Variant</button>
 
                 <div class="flex justify-end gap-4 mt-6">
+                    @if($editingProductId)
+                    <button type="button" wire:click="deleteProduct" onclick="confirm('Delete this product? This cannot be undone.') || event.stopImmediatePropagation()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mr-auto">Delete Product</button>
+                    @endif
                     <button type="button" wire:click="closeModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
                     <button type="submit" class="bg-blue-600  px-4 py-2 rounded hover:bg-blue-700">Save Product</button>
                 </div>
