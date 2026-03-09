@@ -119,7 +119,7 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="px-6 py-3 text-left"></th>
+                        <th class="px-6 py-3 text-left"></th> 
                         <th class="px-6 py-3 text-left cursor-pointer hover:bg-gray-100 font-semibold text-gray-700 " wire:click="sortBy('created_at')">Date {!! $this->sortIcon('created_at') !!}</th>
                         <th class="px-6 py-3 text-left cursor-pointer hover:bg-gray-100 font-semibold text-gray-700 " wire:click="sortBy('invoice_no')">Invoice # {!! $this->sortIcon('invoice_no') !!}</th>
                         <th class="px-6 py-3 text-left cursor-pointer hover:bg-gray-100 font-semibold text-gray-700 " wire:click="sortBy('customer_id')">Customer {!! $this->sortIcon('customer_id') !!}</th>

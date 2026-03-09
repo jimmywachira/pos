@@ -29,7 +29,7 @@ class Sales extends Component
     public $sortBy = 'created_at';
     public $sortDirection = 'desc';
 
-    // Chart data
+    //Chart data
     public array $salesTrendData = [];
     public array $salesByBranchData = [];
 
