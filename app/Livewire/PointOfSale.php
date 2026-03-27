@@ -30,7 +30,6 @@ class PointOfSale extends Component
     public ?Customer $selectedCustomer = null;
     public $loyaltyPointsToRedeem = 0;
     public $loyaltyDiscount = 0;
-    public $awardLoyaltyPoints = false;
     public ?Shift $activeShift = null;
     public $selectedCategory = null;
 
@@ -72,7 +71,6 @@ class PointOfSale extends Component
     {
         $this->selectedCustomer = Customer::find($value);
         $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
-        $this->awardLoyaltyPoints = false;
     }
 
 
@@ -192,7 +190,6 @@ class PointOfSale extends Component
         $this->amountPaid = 0;
         $this->loyaltyPointsToRedeem = 0;
         $this->loyaltyDiscount = 0;
-        $this->awardLoyaltyPoints = false;
         $this->resumingSaleId = null;
     }
 
@@ -235,7 +232,7 @@ class PointOfSale extends Component
                         'meta' => [
                             'loyalty_discount' => $this->loyaltyDiscount,
                             'points_redeemed' => $this->loyaltyPointsToRedeem,
-                            'award_loyalty_points' => (bool) $this->awardLoyaltyPoints,
+                            'award_loyalty_points' => (bool) $this->selectedCustomer,
                         ],
                         'paid' => floatval($this->amountPaid),
                         'payment_method' => 'cash',
@@ -255,7 +252,7 @@ class PointOfSale extends Component
                         'meta' => [
                             'loyalty_discount' => $this->loyaltyDiscount,
                             'points_redeemed' => $this->loyaltyPointsToRedeem,
-                            'award_loyalty_points' => (bool) $this->awardLoyaltyPoints,
+                            'award_loyalty_points' => (bool) $this->selectedCustomer,
                         ],
                         'paid' => floatval($this->amountPaid),
                         'payment_method' => 'cash',
@@ -295,13 +292,11 @@ class PointOfSale extends Component
                     $this->selectedCustomer->decrement('loyalty_points', $this->loyaltyPointsToRedeem);
                 }
 
-                // 2. Award new points
-                if ($this->awardLoyaltyPoints) {
-                    $earnRate = Setting::get('loyalty_earn_rate', 100);
-                    if ($earnRate > 0) {
-                        $pointsEarned = floor($this->subtotal / $earnRate);
-                        $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
-                    }
+                // 2. Award new points automatically when a customer is selected
+                $earnRate = Setting::get('loyalty_earn_rate', 100);
+                if ($earnRate > 0) {
+                    $pointsEarned = floor($this->subtotal / $earnRate);
+                    $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
                 }
             }
                 return $sale;

@@ -12,14 +12,24 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+            document.documentElement.classList.toggle('dark', shouldUseDark);
+        })();
+    </script>
+
 </head>
 
-<body class="w-full min-h-screen flex flex-col bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] text-gray-900 antialiased">
+<body class="w-full min-h-screen flex flex-col font-semibold bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] text-gray-900 antialiased dark:bg-slate-950 dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] dark:text-slate-100">
 
     <x-header />
 

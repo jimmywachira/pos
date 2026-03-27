@@ -1,11 +1,11 @@
 <div>
     <div class="flex h-[calc(100vh-80px)] relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
         @if(!$activeShift)
-        <div class="absolute inset-0 bg-white/20 backdrop-blur-lg z-10 flex items-center justify-center">
-            <div class="text-center p-8 shadow-lg border">
+        <div class="absolute inset-0 bg-white/20 backdrop-blur-lg z-10 flex items-center justify-center dark:bg-slate-950/40">
+            <div class="text-center p-8 shadow-lg border dark:border-slate-700 dark:bg-slate-900">
                 <ion-icon name="stop-circle-outline" class="text-5xl text-red-500 mx-auto"></ion-icon> 
                 <h2 class="font-semibold mt-4">No Active Shift</h2>
-                <p class="text-gray-600 mt-2">You must clock in to start a new sales session.</p>
+                <p class="text-gray-600 mt-2 dark:text-slate-300">You must clock in to start a new sales session.</p>
                 <div class="mt-6">
                     <a href="{{ route('shifts.management') }}" wire:navigate class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Clock In</a>
                 </div>
@@ -18,7 +18,7 @@
             'w-full' => empty($cart),
             ])>
             <div class="mb-4 relative">
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products..." class="w-full p-3 pl-10 border-2 border-blue-600 
+                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Scan or search products..." class="w-full p-3 pl-10 border-2 border-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-400 
              ">
                 <ion-icon size="large" name="search-outline" class="absolute left-3 top-1/2 -translate-y-1/2"></ion-icon>
             </div>
@@ -26,11 +26,11 @@
             <!-- Category Filter -->
             <div class="mb-4">
                 <div class="space-x-2 overflow-x-auto pb-2 m-2 px-2">
-                    <button wire:click="filterByCategory(null)" class="whitespace-nowrap px-4 py-2  transition-colors {{ !$selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300' }}">
+                    <button wire:click="filterByCategory(null)" class="whitespace-nowrap px-4 py-2  transition-colors {{ !$selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600' }}">
                         All Products
                     </button>
                     @foreach($categories as $category)
-                    <button wire:click="filterByCategory({{ $category->id }})" class="whitespace-nowrap px-4 py-2  transition-colors {{ $selectedCategory == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300' }}">
+                    <button wire:click="filterByCategory({{ $category->id }})" class="whitespace-nowrap px-4 py-2  transition-colors {{ $selectedCategory == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600' }}">
                         {{ $category->name }}
                     </button>
                     @endforeach
@@ -42,9 +42,9 @@
                 'md:grid-cols-4 lg:grid-cols-6' => empty($cart),
                 ])>
                 @forelse($products as $product)
-                <div wire:click="addToCart({{ $product->id }})" class="rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden" x-data="{ added: false }" @click="added = true; setTimeout(() => added = false, 800)">
+                <div wire:click="addToCart({{ $product->id }})" class="rounded-lg shadow-sm border border-gray-200 bg-white cursor-pointer hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden dark:border-slate-700 dark:bg-slate-900" x-data="{ added: false }" @click="added = true; setTimeout(() => added = false, 800)">
                     <div class="relative">
-                        <div class="w-full h-32 bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                        <div class="w-full h-32 bg-gray-100 flex items-center justify-center relative overflow-hidden dark:bg-slate-800">
                             <img class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 hover:scale-105" src="{{ $product->product->image_url ?: 'https://picsum.photos/seed/' . $product->id . '/900/700' }}" alt="{{ $product->product->name }}">
                         </div>
                         <div x-show="added" x-transition class="absolute inset-0 bg-blue-500/60 flex items-center justify-center text-white text-lg font-semibold">
@@ -52,15 +52,15 @@
                         </div>
                     </div>
                     <div class="p-3 flex flex-col flex-grow">
-                        <h3 class="font-bold text-gray-800 truncate text-base">{{ $product->product->name }}</h3>
-                        <p class="text-sm text-gray-500">{{ $product->label }}</p>
+                        <h3 class="font-bold text-gray-800 truncate text-base dark:text-slate-100">{{ $product->product->name }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-slate-300">{{ $product->label }}</p>
                         <p class="font-semibold mt-auto pt-2 text-blue-600 text-lg">Ksh {{ number_format($product->retail_price) }}</p>
                     </div>
 
                 </div>
                 @empty
-                <div class="col-span-full text-center py-10 text-gray-500">
-                    <p class="text-gray-500">No products found.</p>
+                <div class="col-span-full text-center py-10 text-gray-500 dark:text-slate-300">
+                    <p class="text-gray-500 dark:text-slate-300">No products found.</p>
                 </div>
                 @endforelse
             </div>
@@ -72,7 +72,7 @@
 
             {{-- Held Sales --}}
             @if($heldSales->count() > 0)
-            <div class="mt-6 p-4 shadow-lg border border-gray-200">
+            <div class="mt-6 p-4 shadow-lg border border-gray-200 dark:border-slate-700 dark:bg-slate-900">
                 <h3 class="mb-2 flex items-center gap-2">
                     <ion-icon name="pause-circle-outline"></ion-icon> Held Sales
                 </h3>
@@ -93,8 +93,8 @@
 
         {{-- Cart Section (conditional) --}}
         @if(!empty($cart))
-        <div class="w-2/5 flex flex-col bg-gray-50 border-l border-gray-200">
-            <div class="p-4 border-b border-gray-200">
+        <div class="w-2/5 flex flex-col bg-gray-50 border-l border-gray-200 dark:bg-slate-900 dark:border-slate-700">
+            <div class="p-4 border-b border-gray-200 dark:border-slate-700">
                 <div class="flex justify-between items-center">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <ion-icon class="text-blue-600" name="cart-outline"></ion-icon>
@@ -110,21 +110,21 @@
             <!-- Cart Items -->
             <div class="flex-1 overflow-y-auto p-4 space-y-3">
                 @forelse($cart as $variantId => $item)
-                <div class="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm">
+                <div class="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm dark:bg-slate-800">
                     <div class="flex-1">
-                        <p class="font-bold text-base text-gray-800">{{ $item['name'] }}</p>
-                        <p class="text-sm text-gray-500">Ksh {{ number_format($item['unit_price'], 2) }}</p>
+                        <p class="font-bold text-base text-gray-800 dark:text-slate-100">{{ $item['name'] }}</p>
+                        <p class="text-sm text-gray-500 dark:text-slate-300">Ksh {{ number_format($item['unit_price'], 2) }}</p>
                     </div>
                     <div class="flex items-center justify-center gap-2">
-                        <button wire:click="decrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-red-200 hover:text-red-700 transition-colors">
+                        <button wire:click="decrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-red-200 hover:text-red-700 transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-red-900/50">
                             <ion-icon name="remove-outline"></ion-icon>
                         </button>
                         <span class="w-8 text-center font-bold text-base">{{ $item['quantity'] }}</span>
-                        <button wire:click="incrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-blue-200 hover:text-blue-700 transition-colors">
+                        <button wire:click="incrementQuantity({{ $variantId }})" class="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-blue-200 hover:text-blue-700 transition-colors dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-blue-900/50">
                             <ion-icon name="add-outline"></ion-icon>
                         </button>
                     </div>
-                    <p class="w-24 text-right font-bold text-base text-gray-800">Ksh {{ number_format($item['unit_price'] * $item['quantity'], 2) }}</p>
+                    <p class="w-24 text-right font-bold text-base text-gray-800 dark:text-slate-100">Ksh {{ number_format($item['unit_price'] * $item['quantity'], 2) }}</p>
                     <button wire:click="removeFromCart({{ $variantId }})" class="text-gray-400 hover:text-red-600 text-xl transition-colors">
                         <ion-icon name="trash-outline"></ion-icon>
                     </button>
@@ -138,10 +138,10 @@
             </div>
 
             <!-- Totals & Payment Section -->
-            <div class="p-4 border-t border-gray-200 bg-white">
+            <div class="p-4 border-t border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900">
                 <div class="mb-4">
-                    <label for="customer_id" class="block text-sm font-semibold text-gray-700">Customer (for loyalty)</label>
-                    <select id="customer_id" wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2">
+                    <label for="customer_id" class="block text-sm font-semibold text-gray-700 dark:text-slate-200">Customer (for loyalty)</label>
+                    <select id="customer_id" wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
                         <option value="">Walk-in customer (no points)</option>
                         @foreach($customers as $customer)
                         <option value="{{ $customer->id }}">{{ $customer->name }}</option>
@@ -153,50 +153,39 @@
                     <div class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg">
                         <p class="font-bold text-base">{{ $selectedCustomer->name }}</p>
                         <p class="text-sm">Available Points: <span class="font-bold">{{ number_format($selectedCustomer->loyalty_points, 0) }}</span></p>
-                        <div class="mt-2 flex items-center justify-between gap-3 text-sm">
-                            <span>Award loyalty points</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model.live="awardLoyaltyPoints" class="sr-only peer">
-                                <div class="w-10 h-5 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
-                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
-                            </label>
-                            <span class="text-xs text-gray-500">
-                                {{ $awardLoyaltyPoints ? 'On' : 'Off' }}
-                            </span>
-                        </div>
                         <div class="flex items-center mt-2 gap-2">
-                            <input type="number" wire:model.live="loyaltyPointsToRedeem" placeholder="Points to use" class="w-full border-gray-300 rounded-md shadow-sm text-sm p-2">
+                            <input type="number" wire:model.live="loyaltyPointsToRedeem" placeholder="Points to use" class="w-full border-gray-300 rounded-md shadow-sm text-sm p-2 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-400">
                             <button wire:click="applyLoyaltyPoints" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-semibold">Apply</button>
                         </div>
                     </div>
                     @endif
                     <div class="flex justify-between text-base">
-                        <span class="text-gray-600">Subtotal:</span>
+                        <span class="text-gray-600 dark:text-slate-300">Subtotal:</span>
                         <span class="font-semibold">Ksh {{ number_format($this->subtotal, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-base">
-                        <span class="text-gray-600">Tax (16%):</span>
+                        <span class="text-gray-600 dark:text-slate-300">Tax (16%):</span>
                         <span class="font-semibold">Ksh {{ number_format($this->tax, 2) }}</span>
                     </div>
                     @if ($loyaltyDiscount > 0)
                     <div class="flex justify-between text-green-600 text-base">
-                        <span class="text-gray-600">Loyalty Discount:</span>
+                        <span class="text-gray-600 dark:text-slate-300">Loyalty Discount:</span>
                         <span class="font-semibold">-Ksh {{ number_format($this->loyaltyDiscount, 2) }}</span>
                     </div>
                     @endif
                 </div>
 
-                <div class="flex justify-between font-bold p-4 bg-gray-100 rounded-lg mb-4">
+                <div class="flex justify-between font-bold p-4 bg-gray-100 rounded-lg mb-4 dark:bg-slate-800">
                     <span class="text-blue-600">Total:</span>
                     <span class="text-blue-600">Ksh {{ number_format($this->grandTotal, 2) }}</span>
                 </div>
 
                 <!-- Payment Method -->
                 <div class="grid grid-cols-2 gap-2 mb-4">
-                    <button wire:click="$set('paymentMethod', 'cash')" class="py-3 font-semibold text-base rounded-md transition-colors {{ $paymentMethod === 'cash' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800' }}" @if($isProcessingMpesa) disabled @endif>
+                    <button wire:click="$set('paymentMethod', 'cash')" class="py-3 font-semibold text-base rounded-md transition-colors {{ $paymentMethod === 'cash' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-slate-700 dark:text-slate-100' }}" @if($isProcessingMpesa) disabled @endif>
                         Cash
                     </button>
-                    <button wire:click="$set('paymentMethod', 'mpesa')" class="py-3 font-semibold text-base rounded-md transition-colors {{ $paymentMethod === 'mpesa' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-800' }}" @if($isProcessingMpesa) disabled @endif>
+                    <button wire:click="$set('paymentMethod', 'mpesa')" class="py-3 font-semibold text-base rounded-md transition-colors {{ $paymentMethod === 'mpesa' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-slate-700 dark:text-slate-100' }}" @if($isProcessingMpesa) disabled @endif>
                         M-Pesa
                     </button>
                 </div>
@@ -205,7 +194,7 @@
                 @if ($paymentMethod === 'cash')
                 <div class="space-y-2">
                     <label for="amount_paid" class="font-semibold text-base">Amount Paid:</label>
-                    <input type="number" wire:model.live="amountPaid" id="amount_paid" class="w-full p-3 text-right border-2 border-gray-300 rounded-md text-xl focus:ring-blue-500 focus:border-blue-500">
+                    <input type="number" wire:model.live="amountPaid" id="amount_paid" class="w-full p-3 text-right border-2 border-gray-300 rounded-md text-xl focus:ring-blue-500 focus:border-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
                     @if ($this->change >= 0)
                     <div class="flex justify-between text-lg text-blue-600 font-bold p-2 bg-blue-50 rounded-md">
                         <span>Change Due:</span>
@@ -218,7 +207,7 @@
                 @if ($paymentMethod === 'mpesa')
                 <div class="space-y-2">
                     <label for="mpesa_phone" class="font-semibold text-base">M-Pesa Phone:</label>
-                    <input type="number" wire:model.live="mpesaPhone" id="mpesa_phone" placeholder="254..." class="w-full p-3 text-center border-2 border-green-500 rounded-md text-xl focus:ring-green-500 focus:border-green-500">
+                    <input type="number" wire:model.live="mpesaPhone" id="mpesa_phone" placeholder="254..." class="w-full p-3 text-center border-2 border-green-500 rounded-md text-xl focus:ring-green-500 focus:border-green-500 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-400">
                     @error('mpesaPhone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 @endif
