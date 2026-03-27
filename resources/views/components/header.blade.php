@@ -1,89 +1,129 @@
-<header x-data="{ open: false, isDark: document.documentElement.classList.contains('dark'), toggleTheme() { this.isDark = !this.isDark; document.documentElement.classList.toggle('dark', this.isDark); localStorage.setItem('theme', this.isDark ? 'dark' : 'light'); } }" class=" p-6 text-center mb-6 text-2xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <nav class="hidden md:flex items-center space-x-4" aria-label="Primary navigation">
-                    <a wire:navigate.hover href="{{ route('pos') }}" class="px-3 py-2 rounded-md {{ request()->routeIs('pos*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}">
-                        <ion-icon size="large" name="grid-outline" class="text-xl"></ion-icon> DemoPOS
-                    </a>
+<header
+    x-data="{
+        open: false,
+        isDark: document.documentElement.classList.contains('dark'),
+        toggleTheme() {
+            this.isDark = !this.isDark;
+            document.documentElement.classList.toggle('dark', this.isDark);
+            localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+        }
+    }"
+    class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-950/80"
+>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between gap-3">
+            <a wire:navigate.hover href="{{ route('pos') }}" class="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-slate-900 dark:text-slate-100">
+                <ion-icon name="grid-outline" class="text-xl text-blue-600 dark:text-blue-400"></ion-icon>
+                <span class="text-base font-bold tracking-wide">DemoPOS</span>
+            </a>
 
-                    <a wire:navigate.hover href="{{ route('inventory.products') }}" class="px-3 py-2 rounded-md {{ request()->routeIs('inventory.products') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}">
-                        <ion-icon size="large" name="server-outline" class="text-xl"></ion-icon> Products
-                    </a>
+            <nav class="hidden lg:flex items-center gap-1" aria-label="Primary navigation">
+                <a wire:navigate.hover href="{{ route('pos') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('pos*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="grid-outline"></ion-icon>
+                    <span>POS</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('inventory.products') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('inventory.products') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="server-outline"></ion-icon>
+                    <span>Products</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('inventory.batches') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="list-outline"></ion-icon>
+                    <span>Stock</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('customers.management') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('customers.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <span>Customers</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('reports.sales') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="bar-chart-outline"></ion-icon>
+                    <span>Reports</span>
+                </a>
+                <a wire:navigate.hover href="{{ route('settings') }}" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('settings.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100' }}">
+                    <ion-icon name="settings-outline"></ion-icon>
+                    <span>Settings</span>
+                </a>
+            </nav>
 
-                    <a wire:navigate.hover href="{{ route('inventory.batches') }}" class="px-3 py-2 rounded-md {{ request()->routeIs('inventory.batches') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}" >
-                        <ion-icon class=" text-xl" size="large" name="list-outline"></ion-icon>Stock
-                    </a>
-
-                    <a wire:navigate.hover href="{{ route('customers.management') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('customers.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}">
-                        <ion-icon size="large" name="people-outline" class="text-xl"></ion-icon> Customers
-                    </a>
-                    <a wire:navigate.hover href="{{ route('reports.sales') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('reports.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}">
-                        <ion-icon size="large" name="bar-chart-outline" class="text-xl"></ion-icon> Reports
-                    </a>
-                    <a wire:navigate.hover href="{{ route('settings') }}" class="px-3 py-2 rounded-md  {{ request()->routeIs('settings.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white' }}">
-                        <ion-icon size="large" name="settings-outline" class="text-xl"></ion-icon> Settings
-                    </a>
-                </nav>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button @click="toggleTheme" type="button" class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button
+                    @click="toggleTheme"
+                    type="button"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+                    :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+                >
                     <ion-icon x-show="!isDark" name="moon-outline" class="text-lg"></ion-icon>
                     <ion-icon x-show="isDark" name="sunny-outline" class="text-lg" style="display: none;"></ion-icon>
                 </button>
 
                 @auth
-                <div class="flex items-center gap-3">
-                    <span class=" py-1 px-2">{{ Str::substr(auth()->user()->name, 0, 3) }}</span>
+                <div class="hidden sm:flex items-center gap-2 rounded-full border border-slate-200 px-2 py-1 dark:border-slate-700">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                        {{ Str::substr(auth()->user()->name, 0, 2) }}
+                    </span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" title="Log out" class="text-blue-500 hover:text-red-600 focus:outline-none">
-                            <ion-icon size="large" name="arrow-redo-outline" class="text-xl"></ion-icon>
+                        <button type="submit" title="Log out" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-red-50 hover:text-red-600 dark:text-slate-300 dark:hover:bg-red-900/20 dark:hover:text-red-300">
+                            <ion-icon name="finger-print-outline" class="text-lg"></ion-icon>
                         </button>
                     </form>
                 </div>
                 @else
-                <div class="flex items-center gap-3">
-                    <a href="/login" class="text-sm text-gray-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-400">Sign in</a>
-                    <a href="/register" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white  rounded-md hover:bg-blue-700">Sign up</a>
+                <div class="hidden sm:flex items-center gap-2">
+                    <a href="/login" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">Sign in</a>
+                    <a href="/register" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">Sign up</a>
                 </div>
                 @endauth
 
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" data-mobile-menu-button @click="open = !open" type="button" aria-controls="mobile-menu" :aria-expanded="open ? 'true' : 'false'" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 dark:text-slate-300 dark:hover:bg-slate-800">
-                        <span class="sr-only">Open main menu</span>
-                        <ion-icon name="menu-outline" class="h-6 w-6" x-show="!open"></ion-icon>
-                        <ion-icon name="close-outline" class="h-6 w-6" x-show="open" style="display: none;"></ion-icon>
-                    </button>
-                </div>
+                <button
+                    @click="open = !open"
+                    type="button"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:hidden dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+                    aria-controls="mobile-menu"
+                    :aria-expanded="open ? 'true' : 'false'"
+                >
+                    <span class="sr-only">Toggle navigation menu</span>
+                    <ion-icon x-show="!open" name="menu-outline" class="text-xl"></ion-icon>
+                    <ion-icon x-show="open" name="close-outline" class="text-xl" style="display: none;"></ion-icon>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="fixed inset-y-0 left-0 z-50 w-20 bg-white shadow-lg md:hidden dark:bg-slate-900" style="display: none;">
-        <div class="flex flex-col items-center pt-20 space-y-4">
-            <a href="{{ route('pos') }}" title="POS" class="p-3 rounded-lg {{ request()->routeIs('pos*') ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100' }}">
-                <ion-icon size="large" name="grid-outline" class="text-2xl"></ion-icon>
-            </a>
-            <a href="{{ route('inventory.products') }}" title="Inventory" class="p-3 rounded-lg {{ request()->routeIs('inventory.*') ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100' }}">
-                <ion-icon size="large" name="server-outline" class="text-2xl"></ion-icon>
-            </a>
-            <a href="{{ route('customers.management') }}" title="Customers" class="p-3 rounded-lg {{ request()->routeIs('customers.*') ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100' }}">
-                <ion-icon size="large" name="people-outline" class="text-2xl"></ion-icon>
-            </a>
-            <a href="{{ route('reports.sales') }}" title="Reports" class="p-3 rounded-lg {{ request()->routeIs('reports.*') ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100' }}">
-                <ion-icon size="large" name="bar-chart-outline" class="text-2xl"></ion-icon>
-            </a>
-            <a href="{{ route('settings') }}" title="Settings" class="p-3 rounded-lg {{ request()->routeIs('settings.*') ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100' }}">
-                <ion-icon size="large" name="settings-outline" class="text-2xl"></ion-icon>
-            </a>
-            <button @click="toggleTheme" type="button" class="p-3 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-800" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-                <ion-icon x-show="!isDark" size="large" name="moon-outline" class="text-2xl"></ion-icon>
-                <ion-icon x-show="isDark" size="large" name="sunny-outline" class="text-2xl" style="display: none;"></ion-icon>
-            </button>
+    <div
+        id="mobile-menu"
+        x-show="open"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="border-t border-slate-200 bg-white/95 px-4 py-4 shadow-lg backdrop-blur-xl lg:hidden dark:border-slate-700 dark:bg-slate-900/95"
+        style="display: none;"
+    >
+        <nav class="grid grid-cols-1 gap-2" aria-label="Mobile primary navigation">
+            <a @click="open = false" wire:navigate.hover href="{{ route('pos') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('pos*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="grid-outline"></ion-icon><span>POS</span></a>
+            <a @click="open = false" wire:navigate.hover href="{{ route('inventory.products') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('inventory.products') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="server-outline"></ion-icon><span>Products</span></a>
+            <a @click="open = false" wire:navigate.hover href="{{ route('inventory.batches') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('inventory.batches') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="list-outline"></ion-icon><span>Stock</span></a>
+            <a @click="open = false" wire:navigate.hover href="{{ route('customers.management') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('customers.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="people-outline"></ion-icon><span>Customers</span></a>
+            <a @click="open = false" wire:navigate.hover href="{{ route('reports.sales') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="bar-chart-outline"></ion-icon><span>Reports</span></a>
+            <a @click="open = false" wire:navigate.hover href="{{ route('settings') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('settings.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800' }}"><ion-icon name="settings-outline"></ion-icon><span>Settings</span></a>
+        </nav>
+
+        @auth
+        <div class="mt-4 flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-700">
+            <span class="text-sm text-slate-600 dark:text-slate-300">{{ auth()->user()->name }}</span>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="rounded-md px-2 py-1 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/20">Log out</button>
+            </form>
         </div>
+        @else
+        <div class="mt-4 grid grid-cols-2 gap-2">
+            <a href="/login" class="rounded-lg border border-slate-300 px-3 py-2 text-center text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Sign in</a>
+            <a href="/register" class="rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700">Sign up</a>
+        </div>
+        @endauth
     </div>
 </header>

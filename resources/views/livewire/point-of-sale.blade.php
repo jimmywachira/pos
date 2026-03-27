@@ -1,5 +1,5 @@
-<div>
-    <div class="flex h-[calc(100vh-80px)] relative" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+    <div class="relative flex h-[calc(100vh-80px)]" x-on:print-receipt.window="window.open('/receipt/' + $event.detail.saleId, '_blank')">
         @if(!$activeShift)
         <div class="absolute inset-0 bg-white/20 backdrop-blur-lg z-10 flex items-center justify-center dark:bg-slate-950/40">
             <div class="text-center p-8 shadow-lg border dark:border-slate-700 dark:bg-slate-900">
@@ -93,8 +93,8 @@
 
         {{-- Cart Section (conditional) --}}
         @if(!empty($cart))
-        <div class="w-2/5 flex flex-col bg-gray-50 border-l border-gray-200 dark:bg-slate-900 dark:border-slate-700">
-            <div class="p-4 border-b border-gray-200 dark:border-slate-700">
+        <div class="w-2/5 flex flex-col border-l border-slate-200 bg-slate-50/90 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90">
+            <div class="border-b border-slate-200 p-4 dark:border-slate-700">
                 <div class="flex justify-between items-center">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <ion-icon class="text-blue-600" name="cart-outline"></ion-icon>
@@ -110,7 +110,7 @@
             <!-- Cart Items -->
             <div class="flex-1 overflow-y-auto p-4 space-y-3">
                 @forelse($cart as $variantId => $item)
-                <div class="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm dark:bg-slate-800">
+                <div class="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
                     <div class="flex-1">
                         <p class="font-bold text-base text-gray-800 dark:text-slate-100">{{ $item['name'] }}</p>
                         <p class="text-sm text-gray-500 dark:text-slate-300">Ksh {{ number_format($item['unit_price'], 2) }}</p>
@@ -138,7 +138,7 @@
             </div>
 
             <!-- Totals & Payment Section -->
-            <div class="p-4 border-t border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+            <div class="border-t border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
                 <div class="mb-4">
                     <label for="customer_id" class="block text-sm font-semibold text-gray-700 dark:text-slate-200">Customer (for loyalty)</label>
                     <select id="customer_id" wire:model.live="customerId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">

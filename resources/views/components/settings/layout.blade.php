@@ -1,5 +1,5 @@
-<div class="flex items-start max-md:flex-col">
-    <div class="me-10 w-full pb-4 md:w-[220px]">
+<div class="flex items-start gap-6 max-md:flex-col">
+    <x-ui.section-card class="me-0 w-full md:w-[240px]" bodyClass="p-3">
         <flux:navlist>
             <flux:navlist.item :href="route('settings.profile')" wire:navigate>{{ __('Profile') }}</flux:navlist.item>
             <flux:navlist.item :href="route('settings.password')" wire:navigate>{{ __('Password') }}</flux:navlist.item>
@@ -8,16 +8,16 @@
             @endif
             <flux:navlist.item :href="route('settings.appearance')" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
         </flux:navlist>
-    </div>
+    </x-ui.section-card>
 
     <flux:separator class="md:hidden" />
 
-    <div class="flex-1 self-stretch max-md:pt-6">
-        <flux:heading>{{ $heading ?? '' }}</flux:heading>
-        <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
+    <x-ui.section-card class="flex-1 self-stretch" :title="$heading ?? ''" :subtitle="$subheading ?? ''" bodyClass="p-6">
+        <flux:heading class="sr-only">{{ $heading ?? '' }}</flux:heading>
+        <flux:subheading class="sr-only">{{ $subheading ?? '' }}</flux:subheading>
 
-        <div class="mt-5 w-full max-w-lg">
+        <div class="w-full max-w-2xl">
             {{ $slot }}
         </div>
-    </div>
+    </x-ui.section-card>
 </div>

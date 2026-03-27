@@ -34,7 +34,7 @@
     <x-header />
 
     <div class="relative w-full flex-1">
-        <main class="h-full md:pl-0 pl-20">
+        <main class="h-full">
             {{ $slot }}
         </main>
     </div>

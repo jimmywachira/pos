@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-full">
 
 <meta charset=" UTF-8">
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -12,9 +12,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code&display=swap" rel="stylesheet">
 <meta name="description" content="A simple Livewire POS system">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+<script>
+    (() => {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+        document.documentElement.classList.toggle('dark', shouldUseDark);
+    })();
+</script>
 </head>
 
-<body class="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px]">
+<body x-data="{ isDark: document.documentElement.classList.contains('dark'), toggleTheme() { this.isDark = !this.isDark; document.documentElement.classList.toggle('dark', this.isDark); localStorage.setItem('theme', this.isDark ? 'dark' : 'light'); } }" class="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] dark:bg-slate-950 dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)]">
     {{-- <header x-data="{ open: false }" class=" p-6 text-center mb-6 text-2xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
@@ -92,6 +102,13 @@
     </header> --}}
 
     <div class="relative h-full w-full ">
+        <div class="mx-auto max-w-7xl px-4 pt-6 flex justify-end">
+            <button @click="toggleTheme" type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white/80 px-3 py-2 text-xs text-gray-700 shadow-sm hover:bg-gray-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <ion-icon x-show="!isDark" name="moon-outline"></ion-icon>
+                <ion-icon x-show="isDark" name="sunny-outline" style="display: none;"></ion-icon>
+                <span x-text="isDark ? 'Light mode' : 'Dark mode'"></span>
+            </button>
+        </div>
         <main class="min-h-[calc(100vh-160px)] md:pl-0 pl-20">
             {{ $slot }}
         </main>

@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6" style="font-family: 'Delicious Handrawn', cursive; max-width: 400px; margin: auto; padding: 2rem;">
+<div class="mx-auto flex w-full max-w-md flex-col gap-6">
     <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
 
     <!-- Session Status -->
@@ -30,7 +30,7 @@
     </form>
 
     @if (Route::has('register'))
-    <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600">
+    <div class="space-x-1 text-center text-sm text-slate-600 rtl:space-x-reverse dark:text-slate-300">
         <span>{{ __('Don\'t have an account?') }}</span>
         <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
     </div>
