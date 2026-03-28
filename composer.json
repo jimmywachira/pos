@@ -18,7 +18,7 @@
         "livewire/flux": "dev-main",
         "livewire/livewire": "4.0",
         "livewire/volt": "dev-main",
-        "maatwebsite/excel": "^1.1",
+        "maatwebsite/excel": "^3.1",
         "predis/predis": "^3.2",
         "pusher/pusher-php-server": "^7.2",
         "safaricom/mpesa": "^1.0",
