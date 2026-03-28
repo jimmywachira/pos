@@ -1,0 +1,29 @@
+# Default owner for all code.
+
+- @jimmywachira
+
+# CI/CD and release governance.
+
+/.github/workflows/ @jimmywachira
+/.github/dependabot.yml @jimmywachira
+/.github/pull_request_template.md @jimmywachira
+/.github/CODEOWNERS @jimmywachira
+
+# Deployment and operations controls.
+
+/deploy/ @jimmywachira
+/docs/operations.md @jimmywachira
+
+# Application and environment security sensitive files.
+
+/app/Providers/ @jimmywachira
+/config/ @jimmywachira
+/routes/ @jimmywachira
+/database/migrations/ @jimmywachira
+
+# Frontend build and dependency controls.
+
+/package.json @jimmywachira
+/composer.json @jimmywachira
+/vite.config.js @jimmywachira
+/tailwind.config.js @jimmywachira

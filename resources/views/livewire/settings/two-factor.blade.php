@@ -167,7 +167,6 @@
                                     this.copied = true;
                                     setTimeout(() => this.copied = false, 1500);
                                 } catch (e) {
-                                    console.warn('Could not copy to clipboard');
                                 }
                             }
                         }"

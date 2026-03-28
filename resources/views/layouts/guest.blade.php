@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'DemoPOS') }}</title>
 
-    <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin Sans">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,22 +24,16 @@
         })();
     </script>
 </head>
-<body x-data="{ isDark: document.documentElement.classList.contains('dark'), toggleTheme() { this.isDark = !this.isDark; document.documentElement.classList.toggle('dark', this.isDark); localStorage.setItem('theme', this.isDark ? 'dark' : 'light'); } }" class="text-gray-900 antialiased" style="font-family: 'Josefin Sans';">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50 dark:bg-slate-950">
-        <div class="w-full max-w-5xl px-4 flex justify-end">
-            <button @click="toggleTheme" type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white/80 px-3 py-2 text-xs text-gray-700 shadow-sm hover:bg-gray-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-                <ion-icon x-show="!isDark" name="moon-outline"></ion-icon>
-                <ion-icon x-show="isDark" name="sunny-outline" style="display: none;"></ion-icon>
-                <span x-text="isDark ? 'Light mode' : 'Dark mode'"></span>
-            </button>
-        </div>
-        <div class="mb-6">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500 dark:text-slate-300" />
+<body class="w-full min-h-screen bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] text-gray-900 antialiased dark:bg-slate-950 dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] dark:text-slate-100">
+    <div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-6 flex justify-center">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-slate-900 dark:text-slate-100">
+                <ion-icon name="grid-outline" class="text-xl text-blue-600 dark:text-blue-400"></ion-icon>
+                <span class="text-base font-bold tracking-wide">DemoPOS</span>
             </a>
         </div>
 
-        <div class="w-full sm:max-w-md px-6 py-8 bg-white shadow-lg overflow-hidden sm:rounded-xl dark:bg-slate-900 dark:border dark:border-slate-700">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white/95 px-6 py-8 shadow-xl dark:border-slate-700 dark:bg-slate-900/90">
             {{ $slot }}
         </div>
     </div>

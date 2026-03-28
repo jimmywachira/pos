@@ -28,6 +28,7 @@ class PointOfSale extends Component
     public $mpesaPhone;
     public $resumingSaleId = null;
     public ?Customer $selectedCustomer = null;
+    public $useAccumulatedPoints = false;
     public $loyaltyPointsToRedeem = 0;
     public $loyaltyDiscount = 0;
     public ?Shift $activeShift = null;
@@ -69,8 +70,43 @@ class PointOfSale extends Component
     // 🧠 Computed properties
     public function updatedCustomerId($value)
     {
+        if (blank($value)) {
+            $this->selectedCustomer = null;
+            $this->useAccumulatedPoints = false;
+            $this->loyaltyPointsToRedeem = 0;
+            $this->loyaltyDiscount = 0;
+            return;
+        }
+
         $this->selectedCustomer = Customer::find($value);
-        $this->reset(['loyaltyPointsToRedeem', 'loyaltyDiscount']);
+
+        if ($this->useAccumulatedPoints) {
+            $this->applyLoyaltyPoints();
+        } else {
+            $this->loyaltyPointsToRedeem = 0;
+            $this->loyaltyDiscount = 0;
+        }
+    }
+
+    public function updatedCart()
+    {
+        if ($this->useAccumulatedPoints) {
+            $this->applyLoyaltyPoints();
+        } else {
+            $this->loyaltyPointsToRedeem = 0;
+            $this->loyaltyDiscount = 0;
+        }
+    }
+
+    public function updatedUseAccumulatedPoints($value)
+    {
+        if ((bool) $value) {
+            $this->applyLoyaltyPoints();
+            return;
+        }
+
+        $this->loyaltyPointsToRedeem = 0;
+        $this->loyaltyDiscount = 0;
     }
 
 
@@ -101,17 +137,24 @@ class PointOfSale extends Component
 
     public function applyLoyaltyPoints()
     {
-        if (!$this->selectedCustomer || $this->loyaltyPointsToRedeem <= 0) {
+        if (!$this->selectedCustomer || !$this->useAccumulatedPoints) {
+            $this->loyaltyPointsToRedeem = 0;
+            $this->loyaltyDiscount = 0;
             return;
         }
 
-        $pointsToRedeem = min($this->loyaltyPointsToRedeem, $this->selectedCustomer->loyalty_points);
-        $redeemValue = Setting::get('loyalty_redeem_value', 1);
-        
-        $this->loyaltyDiscount = $pointsToRedeem * $redeemValue;
+        $redeemValue = (float) Setting::get('loyalty_redeem_value', 1);
+        if ($redeemValue <= 0) {
+            $this->loyaltyPointsToRedeem = 0;
+            $this->loyaltyDiscount = 0;
+            return;
+        }
 
-        // Ensure discount doesn't exceed subtotal
-        $this->loyaltyDiscount = min($this->loyaltyDiscount, $this->subtotal);
+        $availablePoints = (int) $this->selectedCustomer->loyalty_points;
+        $maxBySubtotal = (int) floor($this->subtotal / $redeemValue);
+        $pointsToRedeem = max(0, min($availablePoints, $maxBySubtotal));
+
+        $this->loyaltyDiscount = $pointsToRedeem * $redeemValue;
         $this->loyaltyPointsToRedeem = $pointsToRedeem;
     }
 
@@ -185,6 +228,9 @@ class PointOfSale extends Component
     public function clearCart()
     {
         $this->cart = [];
+        $this->customerId = null;
+        $this->selectedCustomer = null;
+        $this->useAccumulatedPoints = false;
         $this->isProcessingMpesa = false;
         $this->discount = 0;
         $this->amountPaid = 0;
@@ -447,6 +493,9 @@ class PointOfSale extends Component
         $this->resumingSaleId = $saleId;
         $this->customerId = $sale->customer_id;
         $this->selectedCustomer = $sale->customer;
+        $this->useAccumulatedPoints = (int) data_get($sale->meta, 'points_redeemed', 0) > 0;
+        $this->loyaltyPointsToRedeem = (int) data_get($sale->meta, 'points_redeemed', 0);
+        $this->loyaltyDiscount = (float) data_get($sale->meta, 'loyalty_discount', 0);
 
         $this->cart = $sale->items->mapWithKeys(fn($item) => [
             $item->product_variant_id => [

@@ -1,17 +1,42 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
-    <div class="mb-8 flex justify-between items-start">
+    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
             <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100">Sales Report & Analytics</h1>
             <p class="mt-2 text-slate-600 dark:text-slate-300">Track sales performance, trends, and inventory movements</p>
         </div>
-        <a href="{{ route('reports.sales.print', ['startDate' => $startDate, 'endDate' => $endDate, 'branchId' => $branchId, 'customerId' => $customerId]) }}" 
-           target="_blank"
-           class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-            </svg>
-            Print Report
-        </a>
+
+        <form method="GET" action="{{ route('reports.sales.print') }}" target="_blank" class="w-full rounded-xl border border-slate-200 bg-white/95 p-3 shadow-lg sm:w-auto dark:border-slate-700 dark:bg-slate-900/90">
+            <input type="hidden" name="startDate" value="{{ $startDate }}">
+            <input type="hidden" name="endDate" value="{{ $endDate }}">
+            <input type="hidden" name="branchId" value="{{ $branchId }}">
+            <input type="hidden" name="customerId" value="{{ $customerId }}">
+
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:items-end">
+                <div>
+                    <label for="paper" class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Paper</label>
+                    <select id="paper" name="paper" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
+                        <option value="a4" selected>A4</option>
+                        <option value="letter">Letter</option>
+                        <option value="legal">Legal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="orientation" class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Orientation</label>
+                    <select id="orientation" name="orientation" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
+                        <option value="portrait" selected>Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print Report
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Filters -->
@@ -134,8 +159,8 @@
                     <tr class="border-b border-slate-200 transition hover:bg-blue-50 dark:border-slate-700 dark:hover:bg-blue-900/20 {{ $sale->status === 'reversed' ? 'bg-slate-100 line-through opacity-75 dark:bg-slate-800/70' : '' }}">
                         <td class="px-6 py-4 text-center">
                             <button @click="openSaleId = openSaleId === {{ $sale->id }} ? null : {{ $sale->id }}" class="text-slate-500 transition hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400">
-                                <ion-icon name="chevron-down-outline" x-show="openSaleId !== {{ $sale->id }}" style="font-size: 20px;"></ion-icon>
-                                <ion-icon name="chevron-up-outline" x-show="openSaleId === {{ $sale->id }}" style="font-size: 20px;"></ion-icon>
+                                <ion-icon name="chevron-down-outline" x-show="openSaleId !== {{ $sale->id }}" class="text-[20px]"></ion-icon>
+                                <ion-icon name="chevron-up-outline" x-show="openSaleId === {{ $sale->id }}" class="text-[20px]"></ion-icon>
                             </button>
                         </td>
                         <td class="px-6 py-4 text-slate-700 dark:text-slate-200">{{ $sale->created_at->format('d M Y, H:i') }}</td>
@@ -147,18 +172,18 @@
                         <td class="px-6 py-4 ">
                             <div class="flex items-center gap-3">
                                 <a href="{{ route('receipt.print', $sale) }}" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline transition">
-                                    <ion-icon name="document-text-outline" style="font-size: 18px;"></ion-icon>
+                                    <ion-icon name="document-text-outline" class="text-[18px]"></ion-icon>
                                 </a>
                                 @if($sale->status === 'completed')
                                     <button
                                         x-on:click.prevent="if (confirm('Reverse this sale and restore stock?')) { $wire.reverseSale({{ $sale->id }}) }"
                                         class="text-red-600 hover:text-red-800 transition" title="Reverse Sale"
                                     >
-                                        <ion-icon name="close-circle-outline" style="font-size: 18px;"></ion-icon>
+                                        <ion-icon name="close-circle-outline" class="text-[18px]"></ion-icon>
                                     </button>
                                 @elseif($sale->status === 'reversed')
                                 <span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                                    <ion-icon name="checkmark-circle-outline" style="font-size: 14px;"></ion-icon>
+                                    <ion-icon name="checkmark-circle-outline" class="text-[14px]"></ion-icon>
                                     Reversed
                                 </span>
                                 @endif
@@ -199,7 +224,7 @@
                     <tr>
                         <td colspan="8" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                             <div class="flex flex-col items-center gap-2">
-                                <ion-icon name="search-outline" style="font-size: 32px; opacity: 0.5;"></ion-icon>
+                                <ion-icon name="search-outline" class="text-[32px] opacity-50"></ion-icon>
                                 <p>No sales found for the selected period.</p>
                             </div>
                         </td>
@@ -219,7 +244,7 @@
         <div class="mb-6 rounded-xl border border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100 p-6 dark:border-purple-700/60 dark:from-purple-900/30 dark:to-purple-800/20">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h3 class="flex items-center gap-2 text-2xl font-bold text-purple-900 dark:text-purple-200">
-                    <ion-icon name="swap-vertical-outline" style="font-size: 28px;"></ion-icon>
+                    <ion-icon name="swap-vertical-outline" class="text-[28px]"></ion-icon>
                     Stock Movements
                 </h3>
                 <input
@@ -264,7 +289,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold {{ $movement->direction === 'in' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    <ion-icon name="{{ $movement->direction === 'in' ? 'arrow-down-outline' : 'arrow-up-outline' }}" style="font-size: 14px;"></ion-icon>
+                                    <ion-icon name="{{ $movement->direction === 'in' ? 'arrow-down-outline' : 'arrow-up-outline' }}" class="text-[14px]"></ion-icon>
                                     {{ strtoupper($movement->direction) }}
                                 </span>
                             </td>
@@ -280,7 +305,7 @@
                         <tr>
                             <td colspan="8" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                                 <div class="flex flex-col items-center gap-2">
-                                    <ion-icon name="layers-outline" style="font-size: 32px; opacity: 0.5;"></ion-icon>
+                                    <ion-icon name="layers-outline" class="text-[32px] opacity-50"></ion-icon>
                                     <p>No stock movements found for the selected period.</p>
                                 </div>
                             </td>
@@ -299,7 +324,6 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
-        console.log('Charts script loaded');
         
         const chartColors = {
             primary: 'rgba(59, 130, 246, 1)',
@@ -332,26 +356,17 @@
             return colors.slice(0, count).concat(Array(Math.max(0, count - colors.length)).fill('rgba(156, 163, 175, 1)'));
         };
 
-        // Wait for Alpine to be ready
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM Content Loaded, Alpine version:', Alpine?.version);
-        });
-
         document.addEventListener('alpine:init', () => {
-            console.log('Alpine:init event triggered');
             
             Alpine.data('salesTrendChart', () => ({
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Sales Trend Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for sales trend chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for sales trend');
                             return;
                         }
                         this.chart = new Chart(ctx, {
@@ -397,9 +412,7 @@
                                 }
                             }
                         });
-                        console.log('Sales Trend Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing sales trend chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -408,10 +421,8 @@
                             this.chart.data.labels = data.labels || [];
                             this.chart.data.datasets[0].data = data.values || [];
                             this.chart.update();
-                            console.log('Sales Trend Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating sales trend chart:', e);
                     }
                 }
             }));
@@ -420,14 +431,11 @@
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Sales By Branch Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for sales by branch chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for sales by branch');
                             return;
                         }
                         const colors = generatePaletteColors((data.labels || []).length);
@@ -455,9 +463,7 @@
                                 }
                             }
                         });
-                        console.log('Sales By Branch Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing sales by branch chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -468,10 +474,8 @@
                             this.chart.data.datasets[0].data = data.values || [];
                             this.chart.data.datasets[0].backgroundColor = colors;
                             this.chart.update();
-                            console.log('Sales By Branch Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating sales by branch chart:', e);
                     }
                 }
             }));
@@ -480,14 +484,11 @@
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Top Products Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for top products chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for top products');
                             return;
                         }
                         this.chart = new Chart(ctx, {
@@ -517,9 +518,7 @@
                                 }
                             }
                         });
-                        console.log('Top Products Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing top products chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -528,10 +527,8 @@
                             this.chart.data.labels = data.labels || [];
                             this.chart.data.datasets[0].data = data.quantities || [];
                             this.chart.update();
-                            console.log('Top Products Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating top products chart:', e);
                     }
                 }
             }));
@@ -540,14 +537,11 @@
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Product Category Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for product category chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for product category');
                             return;
                         }
                         const colors = generatePaletteColors((data.labels || []).length);
@@ -575,9 +569,7 @@
                                 }
                             }
                         });
-                        console.log('Product Category Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing product category chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -588,10 +580,8 @@
                             this.chart.data.datasets[0].data = data.values || [];
                             this.chart.data.datasets[0].backgroundColor = colors;
                             this.chart.update();
-                            console.log('Product Category Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating product category chart:', e);
                     }
                 }
             }));
@@ -600,14 +590,11 @@
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Payment Method Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for payment method chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for payment method');
                             return;
                         }
                         const colors = generatePaletteColors((data.labels || []).length);
@@ -636,9 +623,7 @@
                                 }
                             }
                         });
-                        console.log('Payment Method Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing payment method chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -650,10 +635,8 @@
                             this.chart.data.datasets[0].backgroundColor = colors.map((c, i) => c.replace('1)', '0.7)'));
                             this.chart.data.datasets[0].borderColor = colors;
                             this.chart.update();
-                            console.log('Payment Method Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating payment method chart:', e);
                     }
                 }
             }));
@@ -662,14 +645,11 @@
                 chart: null,
                 initChart(data) {
                     try {
-                        console.log('Sales Comparison Chart data:', data);
                         if (!data || !data.labels) {
-                            console.warn('No data for sales comparison chart');
                             return;
                         }
                         const ctx = this.$refs.chartCanvas?.getContext('2d');
                         if (!ctx) {
-                            console.error('Canvas context not found for sales comparison');
                             return;
                         }
                         this.chart = new Chart(ctx, {
@@ -706,9 +686,7 @@
                                 }
                             }
                         });
-                        console.log('Sales Comparison Chart initialized successfully');
                     } catch (e) {
-                        console.error('Error initializing sales comparison chart:', e);
                     }
                 },
                 updateChart(data) {
@@ -717,10 +695,8 @@
                             this.chart.data.labels = data.labels || [];
                             this.chart.data.datasets[0].data = data.values || [];
                             this.chart.update();
-                            console.log('Sales Comparison Chart updated');
                         }
                     } catch (e) {
-                        console.error('Error updating sales comparison chart:', e);
                     }
                 }
             }));

@@ -1,70 +1,45 @@
-<x-layouts.app title="Pricing - DemoPOS">
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">Simple, Transparent Pricing</h1>
-                <p class="mt-6 max-w-2xl mx-auto text-xl text-gray-600">Choose the plan that's right for your business. No hidden fees, no surprises.</p>
-            </div>
+<x-layouts.marketing-shell
+    title="Pricing - DemoPOS"
+    pageTitle="Simple, Transparent Pricing"
+    pageSubtitle="Choose the plan that's right for your business. No hidden fees."
+>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <article class="flex flex-col rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/80">
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Starter</h3>
+            <p class="mt-3 text-4xl font-extrabold text-slate-900 dark:text-slate-100">$29<span class="ml-1 text-base font-semibold text-slate-500 dark:text-slate-400">/mo</span></p>
+            <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Perfect for new businesses and small shops.</p>
+            <ul class="mt-5 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <li>Point of Sale</li>
+                <li>Basic Inventory</li>
+                <li>Basic Reporting</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex justify-center rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600">Get Started</a>
+        </article>
 
-            <div class="mt-16 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
-                {{-- Plan 1: Basic --}}
-                <div class="relative p-8 bg-white/50 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-                    <div class="flex-1">
-                        <h3 class="text-xl font-semibold text-gray-900">Starter</h3>
-                        <p class="mt-4 flex items-baseline text-gray-900">
-                            <span class="text-5xl font-extrabold tracking-tight">$29</span>
-                            <span class="ml-1 text-xl font-semibold">/mo</span>
-                        </p>
-                        <p class="mt-6 text-gray-500">Perfect for new businesses and small shops.</p>
+        <article class="relative flex flex-col rounded-2xl border-2 border-blue-500 bg-white/90 p-6 shadow-md dark:bg-slate-900/80">
+            <span class="absolute -top-3 left-6 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">Most Popular</span>
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Professional</h3>
+            <p class="mt-3 text-4xl font-extrabold text-slate-900 dark:text-slate-100">$79<span class="ml-1 text-base font-semibold text-slate-500 dark:text-slate-400">/mo</span></p>
+            <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">For growing businesses that need more power.</p>
+            <ul class="mt-5 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <li>Everything in Starter</li>
+                <li>Advanced Inventory</li>
+                <li>Advanced Reporting</li>
+                <li>Customer Management</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">Choose Pro</a>
+        </article>
 
-                        <ul role="list" class="mt-6 space-y-6">
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Point of Sale</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Basic Inventory</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Basic Reporting</span></li>
-                        </ul>
-                    </div>
-                    <a href="#" class="bg-blue-50 text-blue-700 hover:bg-blue-100 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium">Get Started</a>
-                </div>
-
-                {{-- Plan 2: Pro --}}
-                <div class="relative p-8 bg-white/50 backdrop-blur-xl border-2 border-blue-500 rounded-2xl shadow-sm flex flex-col">
-                    <div class="flex-1">
-                        <h3 class="text-xl font-semibold text-gray-900">Professional</h3>
-                        <p class="absolute top-0 py-1.5 px-4 bg-blue-500 rounded-full text-xs font-semibold uppercase tracking-wide text-white transform -translate-y-1/2">Most popular</p>
-                        <p class="mt-4 flex items-baseline text-gray-900">
-                            <span class="text-5xl font-extrabold tracking-tight">$79</span>
-                            <span class="ml-1 text-xl font-semibold">/mo</span>
-                        </p>
-                        <p class="mt-6 text-gray-500">For growing businesses that need more power.</p>
-
-                        <ul role="list" class="mt-6 space-y-6">
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Everything in Starter</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Advanced Inventory</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Advanced Reporting</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Customer Management</span></li>
-                        </ul>
-                    </div>
-                    <a href="#" class="bg-blue-500 text-white hover:bg-blue-600 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium">Choose Pro</a>
-                </div>
-
-                {{-- Plan 3: Enterprise --}}
-                <div class="relative p-8 bg-white/50 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-                    <div class="flex-1">
-                        <h3 class="text-xl font-semibold text-gray-900">Enterprise</h3>
-                        <p class="mt-4 flex items-baseline text-gray-900">
-                            <span class="text-5xl font-extrabold tracking-tight">Contact Us</span>
-                        </p>
-                        <p class="mt-6 text-gray-500">For large-scale operations with custom needs.</p>
-
-                        <ul role="list" class="mt-6 space-y-6">
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Everything in Pro</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">API Access</span></li>
-                            <li class="flex"><span class="text-blue-500">&#10003;</span><span class="ml-3 text-gray-500">Dedicated Support</span></li>
-                        </ul>
-                    </div>
-                    <a href="#" class="bg-blue-50 text-blue-700 hover:bg-blue-100 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium">Contact Sales</a>
-                </div>
-            </div>
-        </div>
+        <article class="flex flex-col rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/80">
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Enterprise</h3>
+            <p class="mt-3 text-3xl font-extrabold text-slate-900 dark:text-slate-100">Contact Us</p>
+            <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">For large-scale operations with custom needs.</p>
+            <ul class="mt-5 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <li>Everything in Pro</li>
+                <li>API Access</li>
+                <li>Dedicated Support</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex justify-center rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600">Contact Sales</a>
+        </article>
     </div>
-</x-layouts.app>
+</x-layouts.marketing-shell>

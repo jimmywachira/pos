@@ -1,0 +1,64 @@
+name: PR Checklist Gate
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - main
+      - develop
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  validate-pr-template:
+    name: Validate PR Checklist
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate required PR checklist items
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request?.body || '';
+
+            const requiredCheckedItems = [
+              'Lint (Pint) must pass',
+              'Tests (Laravel) must pass',
+              'Frontend Build (Vite) must pass',
+              'No required GitHub checks are bypassed',
+            ];
+
+            const missingChecks = [];
+
+            for (const item of requiredCheckedItems) {
+              const checkedPattern = new RegExp(`- \\[x\\]\\s*` + item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+              if (!checkedPattern.test(body)) {
+                missingChecks.push(item);
+              }
+            }
+
+            const deploymentNotesHeader = /##\s*Deployment Notes/i;
+            const deploymentNotesFilled = /##\s*Deployment Notes[\s\S]*?\n\n(?!List any deployment steps needed beyond normal release procedure\.)\S/i;
+
+            const problems = [];
+
+            if (!deploymentNotesHeader.test(body)) {
+              problems.push('Deployment Notes section is missing.');
+            } else if (!deploymentNotesFilled.test(body)) {
+              problems.push('Deployment Notes section is still placeholder/empty.');
+            }
+
+            if (missingChecks.length > 0) {
+              problems.push('Unchecked CI gate items: ' + missingChecks.join(', '));
+            }
+
+            if (problems.length > 0) {
+              core.setFailed(
+                'PR checklist validation failed. ' + problems.join(' ')
+              );
+              return;
+            }
+
+            core.info('PR checklist validation passed.');

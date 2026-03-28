@@ -1,0 +1,31 @@
+name: CODEOWNERS Lint
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-codeowners:
+    name: Validate CODEOWNERS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate CODEOWNERS
+        uses: mszostok/codeowners-validator@v0.7.4
+        with:
+          checks: "duppatterns,notowned,syntax"
+          experimental_checks: "avoid-shadowing"
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}

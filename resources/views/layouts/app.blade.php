@@ -33,8 +33,8 @@
 
     <x-header />
 
-    <div class="relative w-full flex-1">
-        <main class="h-full">
+    <div class="relative flex w-full flex-1">
+        <main class="mx-auto flex h-full w-full flex-col pb-6 sm:pb-8 lg:pb-10">
             {{ $slot }}
         </main>
     </div>

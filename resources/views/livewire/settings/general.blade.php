@@ -1,18 +1,18 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
     <x-ui.section-card class="mb-6" bodyClass="p-4">
     <nav wire:navigate class="flex flex-wrap justify-evenly gap-3" x-data="{ open: false }">
-        <a wire:navigate.hover href="{{ route('settings') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 font-bold transition-colors {{ request()->routeIs('settings') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}" style="font-size: 1.1rem;">
+        <a wire:navigate.hover href="{{ route('settings') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-bold transition-colors {{ request()->routeIs('settings') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}">
             <ion-icon class="text-3xl" name="settings-outline"></ion-icon>
             <span>settings</span>
         </a>
 
-        <a wire:navigate.hover href="{{ route('shifts.management') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 font-bold transition-colors {{ request()->routeIs('shifts.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}" style="font-size: 1.1rem;">
+        <a wire:navigate.hover href="{{ route('shifts.management') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-bold transition-colors {{ request()->routeIs('shifts.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}">
             <ion-icon class="text-3xl" name="people-outline"></ion-icon>
             <span>shifts</span>
         </a>
 
         {{-- @if(auth()->user()?->hasRole('admin')) --}}
-        <a wire:navigate.hover href="{{ route('users.management') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 font-bold transition-colors {{ request()->routeIs('users.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}" style="font-size: 1.1rem;">
+        <a wire:navigate.hover href="{{ route('users.management') }}" class="flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-bold transition-colors {{ request()->routeIs('users.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-300' }}">
             <ion-icon class="text-3xl" name="lock-closed-outline"></ion-icon>
             <span>role</span>
         </a>
@@ -71,7 +71,7 @@
                         @endif
                         <input type="file" id="logo" wire:model="logo" class="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-4 file:rounded-full file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300">
                     </div>
-                    <div wire:loading wire:target="logo" class=mt-1">Uploading...</div>
+                    <div wire:loading wire:target="logo" class="mt-1">Uploading...</div>
                     @error('logo') <span class="text-red-500 mt-1">{{ $message }}</span> @enderror
                 </div>
             </div>

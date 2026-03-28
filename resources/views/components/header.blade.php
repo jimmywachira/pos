@@ -58,7 +58,7 @@
 
                 @auth
                 <div class="hidden sm:flex items-center gap-2 rounded-full border border-slate-200 px-2 py-1 dark:border-slate-700">
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold capitalize text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
                         {{ Str::substr(auth()->user()->name, 0, 2) }}
                     </span>
                     <form method="POST" action="{{ route('logout') }}">
