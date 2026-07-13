@@ -11,8 +11,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Delius+Unicase:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -22,19 +22,17 @@
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark;
-
             document.documentElement.classList.toggle('dark', shouldUseDark);
         })();
     </script>
-
 </head>
 
-<body class="w-full min-h-screen flex flex-col font-semibold bg-gray-100/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:36px_36px] text-gray-900 antialiased dark:bg-slate-950 dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] dark:text-slate-100">
+<body class="flex h-full min-h-screen flex-col bg-white font-medium text-slate-900 antialiased dark:bg-[#0a0d0c] dark:text-slate-100" font-family: 'Delius Unicase', cursive;>
 
     <x-header />
 
-    <div class="relative flex w-full flex-1">
-        <main class="mx-auto flex h-full w-full flex-col pb-6 sm:pb-8 lg:pb-10">
+    <div class="relative flex w-full flex-1 min-h-0 lg:pl-60">
+        <main class="mx-auto flex h-full min-h-0 w-full flex-1 flex-col">
             {{ $slot }}
         </main>
     </div>
@@ -47,25 +45,5 @@
     <!-- Icons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-    {{-- <script>
-        document.addEventListener('livewire:init', function () {
-            //alert('Livewire component loaded');
-            Livewire.on('showSuccessToast', e => {
-                // Create toast element
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg';
-                toast.textContent = e.message;
-                // Append to body
-                document.body.appendChild(toast);
-
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
-                 
-            });
-        }); --}}
-    </script>    
 </body>
 </html>

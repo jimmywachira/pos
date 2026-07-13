@@ -56,7 +56,7 @@ class PointOfSale extends Component
     {
         $query = ProductVariant::with('product')
             ->when($this->selectedCategory, function ($q) {
-                $q->whereHas('product', fn ($p) => $p->where('category_id', $this->selectedCategory));
+                $q->whereHas('product', fn($p) => $p->where('category_id', $this->selectedCategory));
             })
             ->when($this->search, function ($q) {
                 $q->where('label', 'like', "%{$this->search}%")
@@ -174,8 +174,8 @@ class PointOfSale extends Component
         }
 
         $stock = Stock::where('product_variant_id', $variantId)
-                      ->where('branch_id', $this->branchId)
-                      ->first();
+            ->where('branch_id', $this->branchId)
+            ->first();
 
         if (!$stock || $stock->quantity <= 0) {
             $this->dispatch('flash-message', message: 'Product is out of stock.', type: 'error');
@@ -331,20 +331,20 @@ class PointOfSale extends Component
                     ]);
                 }
 
-            // Handle loyalty points
-            if ($this->selectedCustomer) {
-                // 1. Deduct redeemed points
-                if ($this->loyaltyPointsToRedeem > 0) {
-                    $this->selectedCustomer->decrement('loyalty_points', $this->loyaltyPointsToRedeem);
-                }
+                // Handle loyalty points
+                if ($this->selectedCustomer) {
+                    // 1. Deduct redeemed points
+                    if ($this->loyaltyPointsToRedeem > 0) {
+                        $this->selectedCustomer->decrement('loyalty_points', $this->loyaltyPointsToRedeem);
+                    }
 
-                // 2. Award new points automatically when a customer is selected
-                $earnRate = Setting::get('loyalty_earn_rate', 100);
-                if ($earnRate > 0) {
-                    $pointsEarned = floor($this->subtotal / $earnRate);
-                    $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
+                    // 2. Award new points automatically when a customer is selected
+                    $earnRate = Setting::get('loyalty_earn_rate', 100);
+                    if ($earnRate > 0) {
+                        $pointsEarned = floor($this->subtotal / $earnRate);
+                        $this->selectedCustomer->increment('loyalty_points', $pointsEarned);
+                    }
                 }
-            }
                 return $sale;
             });
 
@@ -386,68 +386,68 @@ class PointOfSale extends Component
         }
     }
 
-    // public function initiateMpesaPayment()
-    // {
-    //     $this->validate(['mpesaPhone' => 'required|numeric|digits:10']);
+    public function initiateMpesaPayment()
+    {
+        $this->validate(['mpesaPhone' => 'required|numeric|digits:10']);
 
-    //     $invoiceNo = 'INV-' . now()->format('YmdHis');
+        $invoiceNo = 'INV-' . now()->format('YmdHis');
 
-    //     // Create a pending sale record first
-    //     $sale = Sale::create([
-    //         'invoice_no' => $invoiceNo,
-    //         'branch_id' => $this->branchId,
-    //         'user_id' => Auth::id(),
-    //         'customer_id' => $this->customerId,
-    //         'total' => $this->grandTotal,
-    //         'tax' => $this->tax,
-    //         'discount' => $this->discount,
-    //         'paid' => $this->grandTotal,
-    //         'payment_method' => 'mpesa',
-    //         'status' => 'pending_payment',
-    //     ]);
+        // Create a pending sale record first
+        $sale = Sale::create([
+            'invoice_no' => $invoiceNo,
+            'branch_id' => $this->branchId,
+            'user_id' => Auth::id(),
+            'customer_id' => $this->customerId,
+            'total' => $this->grandTotal,
+            'tax' => $this->tax,
+            'discount' => $this->discount,
+            'paid' => $this->grandTotal,
+            'payment_method' => 'mpesa',
+            'status' => 'pending_payment',
+        ]);
 
-    //     foreach ($this->cart as $item) {
-    //         $sale->items()->create([
-    //             'product_variant_id' => $item['id'],
-    //             'quantity' => $item['quantity'],
-    //             'unit_price' => $item['unit_price'],
-    //             'line_total' => $item['unit_price'] * $item['quantity'],
-    //         ]);
-    //     }
+        foreach ($this->cart as $item) {
+            $sale->items()->create([
+                'product_variant_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'line_total' => $item['unit_price'] * $item['quantity'],
+            ]);
+        }
 
-    //     $mpesa = new Mpesa();
-    //     $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
-    //     $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
-        
-        // $amount = (int) ceil($this->grandTotal);
-        // $businessShortCode = config('mpesa.shortcode');
-        // $passkey = config('mpesa.passkey');
-        // $callbackUrl = config('mpesa.stk_callback_url');
+        $mpesa = new Mpesa();
+        $stkPush = $mpesa->STKPush(1, $this->mpesaPhone, $invoiceNo, $invoiceNo);
+        $sale->update(['meta' => ['checkout_request_id' => $stkPush['CheckoutRequestID']]]);
 
-        // $response = $mpesa->STKPushSimulation(
-        //     $businessShortCode,
-        //     $businessShortCode,
-        //     $passkey,
-        //     $amount,
-        //     $this->mpesaPhone,
-        //     $businessShortCode,
-        //     $this->mpesaPhone,
-        //     $callbackUrl,
-        //     $invoiceNo,
-        //     "POS payment {$invoiceNo}",
-        //     'POS'
-        // );
+        $amount = (int) ceil($this->grandTotal);
+        $businessShortCode = config('mpesa.shortcode');
+        $passkey = config('mpesa.passkey');
+        $callbackUrl = config('mpesa.stk_callback_url');
 
-        // $stkPush = is_string($response) ? json_decode($response, true) : (array) $response;
+        $response = $mpesa->STKPushSimulation(
+            $businessShortCode,
+            $businessShortCode,
+            $passkey,
+            $amount,
+            $this->mpesaPhone,
+            $businessShortCode,
+            $this->mpesaPhone,
+            $callbackUrl,
+            $invoiceNo,
+            "POS payment {$invoiceNo}",
+            'POS'
+        );
 
-        // $sale->update(['meta' => [
-        //     'checkout_request_id' => $stkPush['CheckoutRequestID'] ?? null,
-        //     'merchant_request_id' => $stkPush['MerchantRequestID'] ?? null
-        // ]]);
+        $stkPush = is_string($response) ? json_decode($response, true) : (array) $response;
 
-    //     $this->isProcessingMpesa = true;
-    //     $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
-    // }
+        $sale->update(['meta' => [
+            'checkout_request_id' => $stkPush['CheckoutRequestID'] ?? null,
+            'merchant_request_id' => $stkPush['MerchantRequestID'] ?? null
+        ]]);
+
+        $this->isProcessingMpesa = true;
+        $this->dispatch('flash-message', message: 'STK Push sent. Waiting for payment...', type: 'success');
+    }
 
     // 💾 Hold Sale
     public function holdSale()

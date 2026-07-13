@@ -85,5 +85,4 @@ Route::get('/terms', function () {
     return view('components.layouts.terms');
 })->name('terms');
 
-
 require __DIR__.'/auth.php';

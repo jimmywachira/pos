@@ -31,7 +31,7 @@ html.dark {
         @apply antialiased transition-colors duration-300;
         background-color: var(--app-bg);
         color: var(--app-fg);
-        font-family: "Tilt Neon", sans-serif;
+        font-family: "'Delius Unicase', cursive";
         font-weight: 600;
         font-size: 1rem;
         line-height: 1.5;
