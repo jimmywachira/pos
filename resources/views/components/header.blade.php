@@ -15,12 +15,11 @@
             localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
         }
     }"
-    class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-xl font-semibold dark:border-emerald-500/10 dark:bg-[#0a0d0c]/95"
+    class="sticky top-0 z-40 border-b border-slate-200 bg-white backdrop-blur-xl font-semibold dark:border-emerald-500/10 dark:bg-[#0a0d0c]/95"
 >
     {{-- Topbar --}}
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6">
-        <div class="flex h-16 items-center justify-between gap-3">
-
+        <div class="flex h-8 items-center justify-between gap-3">
             {{-- Logo / Brand --}}
             <a
                 wire:navigate.hover
@@ -107,7 +106,7 @@
 
         {{-- Signature element: live terminal breadcrumb --}}
         <div class="hidden h-8 items-center border-t border-slate-100 text-[11px] text-slate-500 lg:flex dark:border-emerald-500/5 dark:text-slate-500">
-            <span class="text-emerald-600 dark:text-emerald-400">operator</span><span class="text-slate-400 dark:text-slate-600">@</span><span>demopos</span><span class="text-slate-400 dark:text-slate-600">:~$</span>
+            <span class="text-emerald-600 dark:text-emerald-400">operator</span><span class="text-slate-400 dark:text-slate-600">@</span><span>demopos</span>
             <span class="ml-2 text-slate-700 dark:text-slate-300">
                 @if(request()->routeIs('pos*')) ./pos
                 @elseif(request()->routeIs('inventory.products')) ./inventory/products
